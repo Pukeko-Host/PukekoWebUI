@@ -1,37 +1,7 @@
-<!doctype html>
-<html class="no-js" lang="">
-
-<head>
-  <meta charset="utf-8">
-  <title>Codename Pukeko</title>
-  <meta name="description" content="Pay for hosting for your favourite games when you're playing them and never when you aren't.">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="apple-touch-icon" href="/icon.png">
-  <!-- Place favicon.ico in the root directory -->
-
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,400i,700,700i&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/normalize.css">
-  <link rel="stylesheet" href="/css/main.css?v=55">
-
-  <meta name="theme-color" content="#134FB0">
-</head>
-
-<body>
-  <!--[if IE]>
-    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-  <![endif]-->
-
-  <!-- Add your site or application content here -->
-  <div class="jumbotron dark">
-    <div class="content">
-      <h1 style="font-size: min(10vw,10rem);"><span class="dim">Codename: </span>Pukeko</h1>
-    </div>
-    <div class="background" style="background: #134FB0;background: linear-gradient(to left, #134FB0 0%,#30475D 100%);">
-
-    </div>
-  </div>
+<?php
+$title = "Home";
+require_once("includes/header.php");
+?>
   <div class="wrapper main">
     <div class="slider">
       <div class="card third">
@@ -92,7 +62,8 @@
     <hr>
     <h2>Supported games</h2>
     <div class="games">
-      <?php 
+      <?php
+        // connect to the database
         require_once('../takahe.conn.php');
         $result = $conn->query('SELECT * FROM game');
         if(!$result){
@@ -124,11 +95,6 @@
       </div>
     </div>
   </div>
-  <script src="/js/vendor/modernizr-3.8.0.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-  <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.4.1.min.js"><\/script>')</script>
-  <script src="/js/plugins.js"></script>
-  <script src="/js/main.js"></script>
-</body>
-
-</html>
+<?php
+require_once("includes/footer.php");
+?>

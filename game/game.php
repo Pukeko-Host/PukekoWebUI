@@ -15,41 +15,14 @@ if(!$result || $result->num_rows<1){
 
 $row = $result->fetch_assoc();
 $gameId = $row['Id'];
-?><!doctype html>
-<html class="no-js" lang="">
 
-<head>
-  <meta charset="utf-8">
-  <title>Hosting <?php echo $row['Name']; ?> | Codename Pukeko</title>
-  <meta name="description" content="Get and pay by the hour for flexible <?php echo $row['Name']; ?> hosting on Codename Pukeko!">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="apple-touch-icon" href="/icon.png">
-  <!-- Place favicon.ico in the root directory -->
-
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,400i,700,700i&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/normalize.css">
-  <link rel="stylesheet" href="/css/main.css?v=55">
-
-  <meta name="theme-color" content="#134FB0">
-</head>
-
-<body>
-  <!--[if IE]>
-    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-  <![endif]-->
-
-  <!-- Add your site or application content here -->
-  <div class="jumbotron dark">
-    <div class="content">
-      <h1 style="font-size: min(10vw,10rem);"><span class="dim">Codename: </span>Pukeko</h1>
-      <h2><?php echo $row['Name']; ?> Hosting</h2>
-    </div>
-    <div class="background" style="background: #134FB0;background: linear-gradient(to left, #134FB0 0%,#30475D 100%);">
-
-    </div>
-  </div>
+$title = $row['Name'];
+$description = "Get a casual ".$row['Name']." server and pay by the hour when you want to hop on.\nLink the game server to a discord server and any member of the server can pay for an hour when they want to play, or everyone can pool together some change to keep the server running.";
+$image = "https://pukeko.yiays.com".$row['Background'];
+$tags = $row['Name'];
+$subtitle = $row['Name']." Hosting";
+require_once("../includes/header.php");
+?>
   <div class="wrapper main">
     <div class="slider">
       <div class="card full" style="background: #134FB0;background: linear-gradient(to left, #134FB0 0%,#30475D 100%);min-width: 50rem;text-align:left;">
@@ -78,7 +51,7 @@ $gameId = $row['Id'];
           echo "<p>Please check back later!</p>";
         }else{
           while($row = $result->fetch_assoc()){
-            echo "<div class=\"card third\">";
+            echo "<div class=\"card third gsms\">";
             echo "  <table style=\"min-height: 12rem;\">";
             echo "    <tr>";
             echo "      <td colspan=\"2\">";
@@ -87,7 +60,10 @@ $gameId = $row['Id'];
             echo "          <span class=\"serverping\" data-server=\"".$row['DomainName']."\">Waiting...</span>";
             echo "        </div>";*/
             echo "        <b>".$row['DomainName']."</b>";
-            echo "        <ul>".str_replace(" - ","<li>",str_replace("\n","</li>",$row['Specs']))."</li></ul>";
+            echo "        <label class=\"float-right\" for=\"nerdstats".$row['Id']."\">👓</label>";
+            echo "        <input class=\"togglestats float-right\" type=\"checkbox\" id=\"nerdstats".$row['Id']."\">";
+            echo "        <ul class=\"perks\">".str_replace(" - ","<li>",str_replace("\n","</li>",$row['Perks']))."</li></ul>";
+            echo "        <ul class=\"specs\">".str_replace(" - ","<li>",str_replace("\n","</li>",$row['Specs']))."</li></ul>";
             echo "      </td>";
             echo "    </tr>";
             echo "    <tr height=\"3rem\">";
@@ -100,6 +76,22 @@ $gameId = $row['Id'];
             echo "    </tr>";
             echo "  </table>";
             echo "  <div class=\"footer\">";
+            echo "    <div class=\"left\">";
+            $result = $conn->query("SELECT gametier.Icon,COUNT(gameserverport.Port) AS IsAvailable
+                                    FROM gametier
+                                      INNER JOIN gameserverport ON gametier.GameId = gameserverport.GameId AND gametier.TierNumber = gameserverport.TierId
+                                      LEFT JOIN gameserver ON gameserverport.Port = gameserver.Port AND gameserver.GMSId = ".$row['Id']."
+                                    WHERE gametier.GameId = $gameId
+                                      AND gameserver.Port IS NULL
+                                    GROUP BY gametier.TierNumber"
+                                  );
+            if(!$result){
+              die($conn->error);
+            }
+            while($row2 = $result->fetch_assoc()){
+              echo "    <a class=\"btn\"><img class=\"nointerpolate\" style=\"height:100%;\" src=\"".$row2['Icon']."\"> ".$row2['IsAvailable']."</a>";
+            }
+            echo "    </div>";
             echo "    <a class=\"btn\">Select</a>";
             echo "  </div>";
             echo "</div>";
@@ -122,7 +114,7 @@ $gameId = $row['Id'];
             echo "    <tr>";
             echo "      <td rowspan=\"2\" width=\"30%\">";
             echo "        <b>".$row['Name']." Tier</b>";
-            echo "        <img src=\"".$row['Icon']."\" alt=\"Icon for the ".$row['Name']." tier\">";
+            echo "        <img src=\"".$row['Icon']."\" style=\"width:100%;\" class=\"nointerpolate\" alt=\"Icon for the ".$row['Name']." tier\">";
             echo "      </td>";
             echo "      <td>";
             echo "        <ul>".str_replace(" - ","<li>",str_replace("\n","</li>",$row['TierPerks']))."</li></ul>";
@@ -142,15 +134,9 @@ $gameId = $row['Id'];
         }
       ?>
     </div>
-    <?php
-      $conn->close();
-    ?>
-  <script src="/js/vendor/modernizr-3.8.0.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-  <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.4.1.min.js"><\/script>')</script>
-  <script src="/js/plugins.js"></script>
-  <script src="/js/main.js"></script>
-  <!--<script src="/js/pingserver.js?v=5"></script>-->
-</body>
-
-</html>
+  </div>
+<?php
+  $conn->close();
+  $footerextra = '<!--<script src="/js/pingserver.js?v=5"></script>-->';
+  require_once("../includes/footer.php");
+?>

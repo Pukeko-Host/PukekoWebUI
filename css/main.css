@@ -135,11 +135,22 @@ h1{
 .dim{
   opacity: 0.75;
 }
+.block{
+  display: block;
+}
+img.nointerpolate{
+  image-rendering: pixelated;
+  max-width: none;
+  max-height: none;
+}
 .dark,.dark>*{
   color: #eee;
 }
 .float-right{
   float: right;
+}
+.float-left{
+  float: left;
 }
 .jumbotron{
   display: block;
@@ -189,6 +200,7 @@ h1{
 }
 .card table{
   margin: -0.25rem;
+  border-spacing: 0.25rem;
 }
 .card table td{
   padding: 0.25rem;
@@ -203,6 +215,12 @@ h1{
   text-align: right;
   background: #134FB0;
   background: linear-gradient(to left, #134FB0 0%,#30475D 100%);
+  position: relative;
+}
+.card .footer>.left{
+  position: absolute;
+  left: 0.75rem;
+  text-align: left;
 }
 
 .btn {
@@ -243,6 +261,22 @@ h1{
 }
 .game>.content{
   text-align: left;
+}
+
+.togglestats{
+  /*display: none;*/
+}
+.togglestats:not(:checked) + .perks{
+  display: block;
+}
+.togglestats:not(:checked) + .perks + .specs{
+  display: none;
+}
+.togglestats:checked + .perks{
+  display: none;
+}
+.togglestats:checked + .perks + .specs{
+  display: block;
 }
 
 /* ==========================================================================
