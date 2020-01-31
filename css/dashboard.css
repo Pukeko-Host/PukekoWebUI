@@ -1,0 +1,95 @@
+.dashboard{
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 6rem);
+    margin: 0;
+    padding: 0;
+    background: black;
+}
+.guilds{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3rem;
+    bottom: 0;
+    padding: 0 0.3rem;
+    background: #30475D;
+    z-index: 5;
+}
+.guild{
+    display: inline-block;
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    margin-top: 0.4rem;
+    cursor: pointer;
+}
+.guild>img{
+    border-radius: 50%;
+    transition: border-radius 250ms;
+    background: #123;
+}
+.guild:hover>img, .guild.active>img{
+    border-radius: 15%;
+}
+.guild>.tooltip{
+    pointer-events: none;
+    opacity: 0;
+    background: #123;
+    position: absolute;
+    top: 0.6rem;
+    left: 3.4rem;
+    transition: opacity 250ms;
+    padding: 0.2rem;
+    color: #eee;
+    border-radius: 0.2rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: min(90vw, 20rem);
+    z-index: 10;
+}
+.guild:hover>.tooltip{
+    opacity: 1;
+}
+
+.gameservers{
+    position: absolute;
+    top: 0;
+    left: 3.6rem;
+    width: 18rem;
+    bottom: 0;
+    background: #10273D;
+    z-index: 4;
+    padding: 0.8rem;
+    padding-top: 3.8rem;
+    color: #eee;
+}
+.gameservers:before{
+    content: "Game Servers";
+    position: absolute;
+    display: inline-block;
+    top: 0;
+    left: 0rem;
+    width: 18rem;
+    height: 1.5rem;
+    padding: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    background: #30475D;
+}
+.gameserver{
+    display: block;
+    margin: -0.6rem;
+    margin-bottom: 0.8rem;
+    background: #30475D;
+    color: #eee !important;
+    text-decoration: none !important;
+    padding: 0.4rem;
+    border-radius: 0.4rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.1);
+}
+.gameserver:hover{
+    background: #50677D;
+}

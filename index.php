@@ -63,8 +63,6 @@ require_once("includes/header.php");
     <h2>Supported games</h2>
     <div class="games">
       <?php
-        // connect to the database
-        require_once('../takahe.conn.php');
         $result = $conn->query('SELECT * FROM game');
         if(!$result){
           print("<b>Failed to fetch list of games!</b>");
@@ -84,10 +82,11 @@ require_once("includes/header.php");
             echo "</div>";
           }
         }
-        $conn->close();
       ?>
       <div class="game card">
-        <div class="background" style="background-color: #aaa; border: 0.5rem #666 dashed; height: 14rem;"></div>
+        <div class="background" style="background-color:#aaa;border:0.5rem #666 dashed;height:14rem;position:relative;overflow:hidden;">
+          <span style="position:absolute;font-size:10rem;left:50%;top:50%;transform:translate(-50%,-50%);color:#666;opacity:0.5;">?</span>
+        </div>
         <div class="content">
           <h3>More games coming soon...</h3>
           <p>We're getting started with the games we're the most familiar with so we can support them the best. As the platform matures, we'll be able to support more games and we'll host polls here to vote on which we should prioritize.</p>

@@ -45,7 +45,7 @@ require_once("../includes/header.php");
     <p>Select a server with the best ping and specs for your needs. <i>Keep in mind this server may not be dedicated solely to you.</i></p>
     <div class="slider">
       <?php
-        $result = $conn->query("SELECT * FROM gms LEFT JOIN gamesupport ON gms.Id = gamesupport.ServerId WHERE gamesupport.GameId = ".$gameId);
+        $result = $conn->query("SELECT * FROM gsms LEFT JOIN gamesupport ON gsms.Id = gamesupport.ServerId WHERE gamesupport.GameId = ".$gameId);
         if(!$result || $result->num_rows<1){
           echo "<p><b>All of our servers appear to be fully-booked for this game!</b></p>";
           echo "<p>Please check back later!</p>";
@@ -136,7 +136,6 @@ require_once("../includes/header.php");
     </div>
   </div>
 <?php
-  $conn->close();
   $footerextra = '<!--<script src="/js/pingserver.js?v=5"></script>-->';
   require_once("../includes/footer.php");
 ?>

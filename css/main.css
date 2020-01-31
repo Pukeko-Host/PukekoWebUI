@@ -19,6 +19,10 @@ html {
   line-height: 1.2;
 }
 
+html,body{
+  min-height: 100vh;
+}
+
 /*
  * Remove text-shadow in selection highlight:
  * https://twitter.com/miketaylr/status/12228805301
@@ -147,12 +151,25 @@ img.nointerpolate{
 .float-left{
   float: left;
 }
+.stretch-fill{
+  z-index: -1;
+  position: absolute;
+  width: 100%;
+  height: auto;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  max-width: none;
+  max-height: none;
+}
+.blur{
+  filter: blur(16px);
+}
 .jumbotron{
   display: block;
   position: relative;
   height: 20rem;
   box-shadow: 0 3px 6px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.1);
-  /*overflow: hidden;*/
 }
 .jumbotron.compact{
   height: 10rem;
@@ -162,9 +179,15 @@ img.nointerpolate{
   left: 0;
   right: 0;
   text-align: center;
-  top: calc(50% - 1.5rem);
+  top: 50%;
   transform: translateY(-50%);
   z-index: 1;
+}
+.jumbotron>.footer + .content{
+  top: calc(50% - 1.5rem);
+}
+.jumbotron.compact>.footer + .content{
+  top: calc(50% - 0.5rem);
 }
 .brand{
   font-size: min(10vw,10rem);
@@ -183,6 +206,7 @@ img.nointerpolate{
   left:0;
   right:0;
   z-index: 0;
+  overflow: hidden;
 }
 .jumbotron>.footer{
   position: absolute;
@@ -290,7 +314,7 @@ nav .parent:hover>.dropdown>a{
 .card table td:not(:last-child){
   border-right: #ddd solid 0.1em;
 }
-.card .footer{
+.card>.footer{
   margin: -1rem;
   margin-top: 1rem;
   padding: 0.75rem;
@@ -299,13 +323,13 @@ nav .parent:hover>.dropdown>a{
   background: linear-gradient(to left, #134FB0 0%,#30475D 100%);
   position: relative;
 }
-.card .footer>.left{
+.card>.footer>.left{
   position: absolute;
   left: 0.75rem;
   text-align: left;
 }
 
-.btn {
+.card>.footer .btn {
   color: #ddd;
   background-color: rgba(255,255,255,0);
   transition: all 250ms;
@@ -314,7 +338,7 @@ nav .parent:hover>.dropdown>a{
   padding: 0.5rem;
   text-decoration: none !important;
 }
-.btn:hover {
+.card>.footer .btn:hover {
   color: #fff;
   background-color: rgba(255,255,255,0.4);
 }

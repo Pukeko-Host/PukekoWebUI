@@ -7,9 +7,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 ini_set('max_execution_time', 300); //300 seconds = 5 minutes. In case if your CURL is slow and is loading too much (Can be IPv6 problem)
 error_reporting(E_ALL);
-$authorizeURL = 'https://discordapp.com/api/oauth2/authorize';
-$tokenURL = 'https://discordapp.com/api/oauth2/token';
-$apiURLBase = 'https://discordapp.com/api/users/@me';
+$apiURLBase = 'https://discordapp.com/api';
 $home = 'https://pukeko.yiays.com/account/';
 
 if(get('rememberme')){
@@ -23,7 +21,7 @@ if(get('code')) { // When Discord redirects the user back here, there will be a 
 		header('Location: '.$home);
 	}
 	// Exchange the auth code for a token
-	$token = apiRequest($tokenURL, array(
+	$token = apiRequest($apiURLBase.'/oauth2/token', array(
 		"grant_type" => "authorization_code",
 		'client_id' => OAUTH2_CLIENT_ID,
 		'client_secret' => OAUTH2_CLIENT_SECRET,
@@ -34,18 +32,23 @@ if(get('code')) { // When Discord redirects the user back here, there will be a 
 		// Connect to DB
 		require_once('../../takahe.conn.php');
 		$_SESSION['access_token'] = $token->access_token;
-		$user = apiRequest($apiURLBase);
+		$user = apiRequest($apiURLBase.'/users/@me');
+		$guilds = apiRequest($apiURLBase.'/users/@me/guilds');
 		$_SESSION['user'] = $user;
+		$_SESSION['guilds'] = $guilds;
 		if(!$conn->query("CALL AddUser(".strval($user->id).",'".$conn->escape_string($user->username)."',".strval($user->discriminator).",'".$conn->escape_string($user->email)."',@UserId)")){
 			$params = array(
 				'access_token' => session('access_token')
 			);
-			apiRequest('https://discordapp.com/api/oauth2/token/revoke',$params);
+			apiRequest($apiURLBase.'/oauth2/token/revoke',$params);
 			session_destroy();
 			printf("Error recording your login! Please try logging in later. ".$conn->error);
 			$conn->close();
 			die();
 		}else{
+			foreach($guilds as &$guild){
+				$conn->query("CALL AddGuild(".$guild->id.",'".$guild->icon."',\"".$conn->escape_string($guild->name)."\",".$user->id.")");
+			}
 			$result = $conn->query("SELECT @UserId;");
 			$_SESSION['userid'] = $result->fetch_array()[0][0];
 			if(isset($_SESSION['return'])){
@@ -70,33 +73,35 @@ if(get('logout')) {
 	$params = array(
 		'access_token' => session('access_token')
 	);
-	apiRequest('https://discordapp.com/api/oauth2/token/revoke',$params);
+	apiRequest($apiURLBase.'/oauth2/token/revoke',$params);
 	session_destroy();
 	header('Location: '.$home);
 	die();
 }
 if(get('login')) { // Start the login process by sending the user to Discord's authorization page
-	if(isset($_SESSION['access_token'])){
-		header('Location: '.$home);
-		die();
-	}
 	if(get('return')) $_SESSION['return']=urldecode(get('return'));
 	else $_SESSION['return']='/account/';
+	if(isset($_SESSION['access_token'])){
+		header('Location: '.$_SESSION['return']);
+		unset($_SESSION['return']);
+		die();
+	}
 	$params = array(
 		'client_id' => OAUTH2_CLIENT_ID,
 		'redirect_uri' => $home,
 		'response_type' => 'code',
-		'scope' => 'identify email'
+		'scope' => 'identify email guilds'
 	);
 	// Redirect the user to Discord's authorization page
-	header('Location: https://discordapp.com/api/oauth2/authorize' . '?' . http_build_query($params));
+	header("Location: $apiURLBase/oauth2/authorize?" . http_build_query($params));
 	die();
 }
 
 // If the page hasn't died yet, show a default screen.
 if(session('access_token')) {
-	$user = apiRequest($apiURLBase);
+	$user = apiRequest($apiURLBase.'/users/@me');
 	$title = $user->username." | Account";
+	$subtitle = "Account Settings";
 	require_once('../includes/header.php');
 	?>
 	<div class="jumbotron dark">
@@ -104,10 +109,10 @@ if(session('access_token')) {
 			<h2>Logged In</h2>
 			<p>Welcome, <?php echo $user->username;?></p>
 		</div>
-		<div class="footer">
-			<p><a href="?logout" class="btn">Logout</a></p>
+		<div class="footer" style="text-align:center;">
+			<a href="?logout" class="btn">Logout</a>
 		</div>
-		<div class="background">
+		<div class="background" style="background:black;">
 			<img class="float-right" id="userphppfp" alt="<?php echo $user->username;?>'s profile picture" src="https://cdn.discordapp.com/avatars/<?php echo $user->id.'/'.$user->avatar;?>.jpg?size=256">
 			<img class="stretch-fill blur dim" alt="<?php echo $user->username;?>'s profile picture, but big and blury" src="https://cdn.discordapp.com/avatars/<?php echo $user->id.'/'.$user->avatar;?>.jpg?size=256">
 		</div>
@@ -115,6 +120,7 @@ if(session('access_token')) {
 <?php
 } else {
 	$title = "Account";
+	$subtitle = "Account Settings";
 	require_once('../includes/header.php');
 	?>
 	<div class="jumbotron">
