@@ -3,13 +3,38 @@ $title = "Dashboard";
 $description = "Manage your game servers on Pukeko Host, ";
 $tags = "dashboard,control panel,settings,customize,customise,admin,operator,op,terminal,command line";
 $compactheader = true;
-$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=25">';
+$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=40">';
 require_once('../includes/header.php');
 if(!isset($_SESSION['access_token'])){
 ?>
-<div class="wrapper">
-    <h2>Please log in to use the dashboard.</h2>
-    <p>Currently, a discord account is required to access the dashboard. <a href="/account/?login&return=%2Fdashboard%2F">Login with Discord</a>.</p>
+<div class="dashboard">
+    <div class="guilds">
+        <div class="guild"><img class="placeholder"></div>
+        <div class="guild"><img class="placeholder"></div>
+        <div class="guild"><img class="placeholder"></div>
+        <div class="guild"><img class="placeholder"></div>
+        <div class="guild"><img class="placeholder"></div>
+        <div class="guild"><img class="placeholder"></div>
+        <div class="guild"><img class="placeholder"></div>
+    </div>
+    <div class="default gameservers">
+        <a class="gameserver" href="#">
+            <span class="placeholder text"></span>
+            <span class="placeholder text" style="font-size: 0.8rem;"></span>
+        </a>
+        <a class="gameserver" href="#">
+            <span class="placeholder text"></span>
+            <span class="placeholder text" style="font-size: 0.8rem;"></span>
+        </a>
+        <a class="gameserver" href="#">
+            <span class="placeholder text"></span>
+            <span class="placeholder text" style="font-size: 0.8rem;"></span>
+        </a>
+    </div>
+    <div class="status">
+        <h2>Please log in to use the dashboard.</h2>
+        <p>Logging in with your discord account is required to access the dashboard. <a href="/account/?login&return=%2Fdashboard%2F">Login with Discord</a>.</p>
+    </div>
 </div>
 <?php
 }else{
@@ -26,7 +51,7 @@ if(!isset($_SESSION['access_token'])){
         }
     }
     echo '</div>';
-    $result = $conn->query("SELECT gameserver.*,game.Name AS gamename,game.Icon FROM (gameserver LEFT JOIN game ON gameserver.GameId = game.Id) LEFT JOIN guild ON gameserver.GuildId = guild.GuildId GROUP BY gameserver.Id");
+    $result = $conn->query("SELECT gameserver.*,game.Name AS gamename,gametier.Icon,gametier.Name AS tiername FROM ((gameserver LEFT JOIN game ON gameserver.GameId = game.Id) LEFT JOIN gametier ON game.Id = gametier.GameId AND gameserver.TierId = gametier.TierNumber) LEFT JOIN guild ON gameserver.GuildId = guild.GuildId GROUP BY gameserver.Id");
     if(!$result){
         echo '<div class="default gameservers">Failed to load the list of servers; '.$conn->error.'</div>';
     }else{
@@ -41,6 +66,8 @@ if(!isset($_SESSION['access_token'])){
             if($row['GuildId']!=$lastguild) echo '</div><div class="gameservers hidden" data-guild="'.$row['GuildId'].'">';
             
             echo '<a class="gameserver" href="#" data-id="'.$row['Id'].'">';
+            if($row['Active']) echo '   <span class="speening"></span>';
+            echo '  <img src="'.$row['Icon'].'" style="height:1em;" class="nointerpolate" alt="Icon for the "'.$row['Name'].'" tier">';
             echo '  '.$row['Name'].' <i class="dim">('.$row['gamename'].')</i>';
             echo '</a>';
 
@@ -48,6 +75,7 @@ if(!isset($_SESSION['access_token'])){
         }
         echo '</div>';
     }
+    echo '<div class="default status"><h1>Hi hi</h1></div>';
     ?>
 </div>
 <?php

@@ -28,9 +28,36 @@
     border-radius: 50%;
     transition: border-radius 250ms;
     background: #123;
+    width: 100%;
+    height: 100%;
+}
+.guild>img.placeholder{
+    background: #ddd;
 }
 .guild:hover>img, .guild.active>img{
     border-radius: 15%;
+}
+.guild:before{
+    content: "";
+    position: absolute;
+    display: inline-block;
+    left: -0.4rem;
+    top: 1.5rem;
+    width: 0;
+    height: 0;
+    padding: 0.1rem;
+    border-radius: 0.1rem;
+    background: #fff;
+    opacity: 0;
+    transition: opacity 100ms, height 250ms, top 250ms;
+}
+.guild:hover:before{
+    opacity: 1;
+}
+.guild.active:before{
+    opacity: 1;
+    top: 1rem;
+    height: 1rem;
 }
 .guild>.tooltip{
     pointer-events: none;
@@ -81,6 +108,7 @@
 }
 .gameserver{
     display: block;
+    position: relative;
     margin: -0.6rem;
     margin-bottom: 0.8rem;
     background: #30475D;
@@ -90,6 +118,47 @@
     border-radius: 0.4rem;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.1);
 }
+.gameserver>.loading{
+    position: absolute;
+    top: 0.3rem;
+    left: 0.2rem;
+    display: inline-block;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    border: 0.1rem solid;
+    border-color: transparent;
+    border-top-color: white;
+    animation: speen 1s ease 0s infinite;
+}
+.gameserver>.speening{
+    position: absolute;
+    top: 0.3rem;
+    left: 0.2rem;
+    display: inline-block;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    border: 0.1rem dashed;
+    border-color: transparent;
+    border-color: white;
+    animation: speen 2s linear 0s infinite;
+}
+@keyframes speen{
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
 .gameserver:hover{
     background: #50677D;
+}
+
+.status{
+    position: absolute;
+    left: 23.2rem;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #00071D;
+    color: #fff;
+    padding: 0.8rem;
 }

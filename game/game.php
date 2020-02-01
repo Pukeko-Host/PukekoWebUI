@@ -13,14 +13,14 @@ if(!$result || $result->num_rows<1){
   die();
 }
 
-$row = $result->fetch_assoc();
-$gameId = $row['Id'];
+$game = $result->fetch_assoc();
+$gameId = $game['Id'];
 
-$title = $row['Name'];
-$description = "Get a casual ".$row['Name']." server and pay by the hour when you want to hop on.\nLink the game server to a discord server and any member of the server can pay for an hour when they want to play, or everyone can pool together some change to keep the server running.";
-$image = "https://pukeko.yiays.com".$row['Background'];
-$tags = $row['Name'];
-$subtitle = $row['Name']." Hosting";
+$title = $game['Name'];
+$description = "Get a casual ".$game['Name']." server and pay by the hour when you want to hop on.\nLink the game server to a discord server and any member of the server can pay for an hour when they want to play, or everyone can pool together some change to keep the server running.";
+$image = "https://pukeko.yiays.com".$game['Background'];
+$tags = $game['Name'];
+$subtitle = $game['Name']." Hosting";
 require_once("../includes/header.php");
 ?>
   <div class="wrapper main">
@@ -28,15 +28,15 @@ require_once("../includes/header.php");
       <div class="card full" style="background: #134FB0;background: linear-gradient(to left, #134FB0 0%,#30475D 100%);min-width: 50rem;text-align:left;">
         <?php
           echo "<div class=\"game card third\" style=\"margin: -1rem 1rem -1rem -1rem;float:left;\">";
-          echo "  <div class=\"background\" style=\"background-image:url('".$row['Background']."');\">";
-          echo "    <img class=\"foreground\" src=\"".$row['Foreground']."\" alt=\"".$row['Name']."\">";
+          echo "  <div class=\"background\" style=\"background-image:url('".$game['Background']."');\">";
+          echo "    <img class=\"foreground\" src=\"".$game['Foreground']."\" alt=\"".$game['Name']."\">";
           echo "  </div>";
           echo "  <div class=\"content\">";
-          echo "    <h3>".$row['Name']."</h3>";
-          echo "    <ul>".str_replace(" - ","<li>",str_replace("\n","</li>",$row['Perks']))."</li></ul>";
+          echo "    <h3>".$game['Name']."</h3>";
+          echo "    <ul>".str_replace(" - ","<li>",str_replace("\n","</li>",$game['Perks']))."</li></ul>";
           echo "  </div>";
           echo "</div>";
-          echo "<p class=\"dark\">".str_replace("\n","</p><p class=\"dark\">",$row['Description'])."</p>";
+          echo "<p class=\"dark\">".str_replace("\n","</p><p class=\"dark\">",$game['Description'])."</p>";
         ?>
       </div>
     </div>
@@ -89,7 +89,7 @@ require_once("../includes/header.php");
               die($conn->error);
             }
             while($row2 = $result->fetch_assoc()){
-              echo "    <a class=\"btn\"><img class=\"nointerpolate\" style=\"height:100%;\" src=\"".$row2['Icon']."\"> ".$row2['IsAvailable']."</a>";
+              echo "    <a class=\"btn\"><img class=\"nointerpolate\" style=\"height:2em;margin:-0.5em;margin-right:0;\" src=\"".$row2['Icon']."\"> ".$row2['IsAvailable']."</a>";
             }
             echo "    </div>";
             echo "    <a class=\"btn\">Select</a>";
@@ -112,8 +112,8 @@ require_once("../includes/header.php");
             echo "<div class=\"card third\">";
             echo "  <table style=\"min-height: 12rem;\">";
             echo "    <tr>";
-            echo "      <td rowspan=\"2\" width=\"30%\">";
-            echo "        <b>".$row['Name']." Tier</b>";
+            echo "      <td rowspan=\"2\" width=\"30%\" style=\"padding-right:1rem;text-align:center;\">";
+            echo "        <b>".$row['Name']." Tier</b><br><br>";
             echo "        <img src=\"".$row['Icon']."\" style=\"width:100%;\" class=\"nointerpolate\" alt=\"Icon for the ".$row['Name']." tier\">";
             echo "      </td>";
             echo "      <td>";
