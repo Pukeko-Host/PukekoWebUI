@@ -1,7 +1,7 @@
 .dashboard{
     position: relative;
     width: 100%;
-    height: calc(100vh - 6rem);
+    height: max(100vh, 40rem);
     margin: 0;
     padding: 0;
     background: black;
@@ -23,6 +23,27 @@
     height: 3rem;
     margin-top: 0.4rem;
     cursor: pointer;
+}
+.guild.hamburger{
+    background: #10273D;
+    border-radius: 50%;
+    line-height: 0;
+    transition: background 250ms;
+}
+.guild.hamburger:hover{
+    background: #20374D;
+}
+.guild.hamburger:before{
+    display: none;
+}
+.guild.hamburger > span{
+    width: 1.5rem;
+    display: inline-block;
+    position: relative;
+    top: 0.25rem;
+    left: 0.6rem;
+    margin-top: 0.4rem;
+    border: 0.15rem solid white;
 }
 .guild>img{
     border-radius: 50%;
@@ -80,12 +101,47 @@
     opacity: 1;
 }
 
-.gameservers{
+.gameserverscontainer{
     position: absolute;
-    top: 0;
     left: 3.6rem;
-    width: 18rem;
+    width: 19.6rem;
+    top: 0;
     bottom: 0;
+    transition: left 100ms;
+}
+.status{
+    position: absolute;
+    left: 23.2rem;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #00071D;
+    color: #fff;
+    padding: 0.8rem;
+    transition: left 100ms;
+}
+@media only screen and (max-width: 65rem){
+    .status{
+        width: calc(100vw - 6.2rem);
+    }
+}
+#showgameservers + .gameserverscontainer{
+    left: -16rem;
+}
+#showgameservers + .gameserverscontainer + .status{
+    left: 3.6rem;
+}
+#showgameservers:checked + .gameserverscontainer{
+    left: 3.6rem;
+}
+#showgameservers:checked + .gameserverscontainer + .status{
+    left: 23.2rem;
+}
+
+.gameservers{
+    position: relative;
+    width: 18rem;
+    height: calc(100% - 4.6rem);
     background: #10273D;
     z-index: 4;
     padding: 0.8rem;
@@ -98,7 +154,7 @@
     display: inline-block;
     top: 0;
     left: 0rem;
-    width: 18rem;
+    width: 18.1rem;
     height: 1.5rem;
     padding: 0.75rem;
     font-size: 1.5rem;
@@ -118,6 +174,10 @@
     border-radius: 0.4rem;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.1);
 }
+.gameserver .ip{
+    font-size: 0.8rem;
+    color: #77F;
+}
 .gameserver>.loading{
     position: absolute;
     top: 0.3rem;
@@ -133,15 +193,13 @@
 }
 .gameserver>.speening{
     position: absolute;
-    top: 0.3rem;
-    left: 0.2rem;
+    top: 0.4rem;
+    left: 0.25rem;
     display: inline-block;
-    width: 1.2rem;
-    height: 1.2rem;
-    border-radius: 50%;
-    border: 0.1rem dashed;
-    border-color: transparent;
-    border-color: white;
+    width: 1.3rem;
+    height: 1.3rem;
+    background: url('../img/dashed-circle.svg?v=2');
+    background-size: contain;
     animation: speen 2s linear 0s infinite;
 }
 @keyframes speen{
@@ -150,15 +208,4 @@
 }
 .gameserver:hover{
     background: #50677D;
-}
-
-.status{
-    position: absolute;
-    left: 23.2rem;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background: #00071D;
-    color: #fff;
-    padding: 0.8rem;
 }

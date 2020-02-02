@@ -17,6 +17,7 @@ html {
   font-size: 1em;
   font-family: "Roboto", "Source Sans", Arial, Helvetica, sans-serif;
   line-height: 1.2;
+  overflow-x: hidden;
 }
 
 html,body{
@@ -105,10 +106,10 @@ table td{
  * Make paragraphs fit in panels better
  */
 
-p:first-child{
+p:first-child,h1:first-child,h2:first-child,h3:first-child,h4:first-child,h5:first-child{
   margin-top:0;
 }
-p:last-child{
+p:last-child,h1:last-child,h2:last-child,h3:last-child,h4:last-child,h5:last-child{
   margin-bottom:0;
 }
 

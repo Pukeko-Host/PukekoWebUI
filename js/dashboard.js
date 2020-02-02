@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $('.guild').on('click',function(){
+    $('.guild:not(.hamburger)').on('click',function(){
         $('.guild.active').removeClass('active');
         $(this).addClass('active');
         $('.gameservers').addClass('hidden');
