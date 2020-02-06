@@ -267,7 +267,7 @@ nav .parent>.dropdown{
   top: 3rem;
   left: 0;
   width: max-content;
-  background: #30475D;
+  background: rgb(60, 89, 116);
   opacity: 0;
   transition: opacity 250ms;
   display: flex;
@@ -375,7 +375,7 @@ nav .parent:hover>.dropdown>a{
   background-position: center;
   position: relative;
   margin: -1rem;
-  margin-bottom: 0;
+  margin-bottom: 1rem;
 }
 .game>.background>img{
   position: absolute;

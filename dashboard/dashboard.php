@@ -118,6 +118,6 @@ if(!isset($_SESSION['access_token'])){
 </div>
 <?php
 }
-$footerextra = '<script src="/js/dashboard.js?v=2"></script>';
+$footerextra = '<script src="/js/dashboard.js?v=16"></script>';
 require_once('../includes/footer.php');
 ?>
