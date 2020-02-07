@@ -33,7 +33,7 @@
 .guild.hamburger:hover{
     background: #20374D;
 }
-.guild.hamburger:before{
+.guild.hamburger::before{
     display: none;
 }
 .guild.hamburger > span{
@@ -44,6 +44,25 @@
     left: 0.6rem;
     margin-top: 0.4rem;
     border: 0.15rem solid white;
+}
+.guild.invalid{
+    background: rgb(85, 19, 19);
+    border-radius: 50%;
+    line-height: 0;
+    transition: background 250ms;
+}
+.guild.invalid::after{
+    content: "!";
+    position: absolute;
+    font-size: 2rem;
+    color: #fff;
+    opacity: 0.5;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.guild.invalid:hover{
+    background: rgb(122, 35, 35);
 }
 .guild>img{
     border-radius: 50%;
@@ -58,7 +77,7 @@
 .guild:hover>img, .guild.active>img{
     border-radius: 15%;
 }
-.guild:before{
+.guild::before{
     content: "";
     position: absolute;
     display: inline-block;
@@ -72,10 +91,10 @@
     opacity: 0;
     transition: opacity 100ms, height 250ms, top 250ms;
 }
-.guild:hover:before{
+.guild:hover::before{
     opacity: 1;
 }
-.guild.active:before{
+.guild.active::before{
     opacity: 1;
     top: 1rem;
     height: 1rem;
@@ -87,6 +106,7 @@
     position: absolute;
     top: 0.6rem;
     left: 3.4rem;
+    line-height: 1;
     transition: opacity 250ms;
     padding: 0.2rem;
     color: #eee;
@@ -109,34 +129,6 @@
     bottom: 0;
     transition: left 100ms;
 }
-.status{
-    position: absolute;
-    left: 23.2rem;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background: #00071D;
-    color: #fff;
-    padding: 0.8rem;
-    transition: left 100ms;
-}
-@media only screen and (max-width: 65rem){
-    .status{
-        width: calc(100vw - 6.2rem);
-    }
-}
-#showgameservers + .gameserverscontainer{
-    left: -16rem;
-}
-#showgameservers + .gameserverscontainer + .status{
-    left: 3.6rem;
-}
-#showgameservers:checked + .gameserverscontainer{
-    left: 3.6rem;
-}
-#showgameservers:checked + .gameserverscontainer + .status{
-    left: 23.2rem;
-}
 
 .gameservers{
     position: relative;
@@ -148,7 +140,7 @@
     padding-top: 3.8rem;
     color: #eee;
 }
-.gameservers:before{
+.gameservers::before{
     content: "Game Servers";
     position: absolute;
     display: inline-block;
@@ -173,6 +165,13 @@
     padding: 0.4rem;
     border-radius: 0.4rem;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.1);
+    transition: background 250ms;
+}
+.gameserver:hover{
+    background: #40576D;
+}
+.gameserver.active{
+    background: #50677D;
 }
 .gameserver .ip{
     font-size: 0.8rem;
@@ -208,4 +207,46 @@
 }
 .gameserver:hover{
     background: #50677D;
+}
+
+.statuses{
+    position: absolute;
+    left: 23.2rem;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #00071D;
+    color: #fff;
+    padding: 0.8rem;
+    transition: left 100ms;
+}
+@media only screen and (max-width: 65rem){
+    .statuses{
+        width: calc(100vw - 6.2rem);
+    }
+}
+#showgameservers + .gameserverscontainer{
+    left: -16rem;
+}
+#showgameservers + .gameserverscontainer + .statuses{
+    left: 3.6rem;
+}
+#showgameservers:checked + .gameserverscontainer{
+    left: 3.6rem;
+}
+#showgameservers:checked + .gameserverscontainer + .statuses{
+    left: 23.2rem;
+}
+
+.status{
+    
+}
+.status>.jumbotron{
+    background: #356;
+    background: linear-gradient(to bottom, transparent 0%, #356 100%);
+    border-radius: 2rem;
+}
+.status>.jumbotron>.content{
+    box-sizing: border-box;
+    padding: 1rem;
 }

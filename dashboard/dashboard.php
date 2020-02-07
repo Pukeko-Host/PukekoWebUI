@@ -1,9 +1,17 @@
 <?php
+$params = explode('/', substr($_SERVER['REQUEST_URI'], 11));
+$GUILD = $params[0]? $params[0]: NULL;
+$GAMESERVER = $params[1]? $params[1]: NULL;
+
+$TIERCLASS = [
+    'Gold'=>'Golden'
+];
+
 $title = "Dashboard";
 $description = "Manage Pukeko servers you share with your fellow discord users. Anyone on any discord server can create a game server to play with others on the spot.";
 $tags = "dashboard,control panel,settings,customize,customise,admin,operator,op,terminal,command line";
 $compactheader = true;
-$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=58">';
+$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=65">';
 require_once('../includes/header.php');
 if(!isset($_SESSION['access_token'])){
 ?>
@@ -27,23 +35,31 @@ if(!isset($_SESSION['access_token'])){
     <input type="checkbox" id="showgameservers" checked style="display:none;">
     <div class="gameserverscontainer">
         <div class="default gameservers">
-            <a class="gameserver" href="#">
+            <div class="gameserver">
                 <span class="placeholder text"></span>
                 <span class="placeholder text" style="font-size: 0.8rem;"></span>
-            </a>
-            <a class="gameserver" href="#">
+            </div>
+            <div class="gameserver">
                 <span class="placeholder text"></span>
                 <span class="placeholder text" style="font-size: 0.8rem;"></span>
-            </a>
-            <a class="gameserver" href="#">
+            </div>
+            <div class="gameserver">
                 <span class="placeholder text"></span>
                 <span class="placeholder text" style="font-size: 0.8rem;"></span>
-            </a>
+            </div>
         </div>
     </div>
-    <div class="status">
-        <h2>Please log in to use the dashboard.</h2>
-        <p>Logging in with your discord account is required to access the dashboard. <a href="/account/?login&return=%2Fdashboard%2F">Login with Discord</a>.</p>
+    <div class="statuses">
+        <div class="status default">
+            <div class="jumbotron">
+                <div class="content">
+                    <h2>Please log in to use the dashboard.</h2>
+                    <p>Logging in with your discord account is required to access the dashboard. <a href="/account/?login&return=<?php echo urlencode($_SERVER['REQUEST_URI']);?>">Login with Discord</a>.</p>
+        
+                </div>
+                <div class="background"></div>
+            </div>
+        </div>
     </div>
 </div>
 <?php
@@ -66,7 +82,7 @@ if(!isset($_SESSION['access_token'])){
     }else{
         while($row = $result->fetch_assoc()){
             $guilds[$row['GuildId']]=array('id'=>$row['GuildId'],'name'=>$row['Name'],'icon'=>"https://cdn.discordapp.com/icons/".$row['GuildId']."/".$row['Icon'].".png",'gameservers'=>array('active'=>array(),'archived'=>array()));
-            echo '<div class="guild" data-id="'.$row['GuildId'].'"><img src="https://cdn.discordapp.com/icons/'.$row['GuildId'].'/'.$row['Icon'].'.png" alt="Discord server icon"><span class="tooltip">'.$row['Name'].'</span></div>';
+            echo '<a href="/dashboard/'.$row['GuildId'].'/" class="guild" data-id="'.$row['GuildId'].'"><img src="https://cdn.discordapp.com/icons/'.$row['GuildId'].'/'.$row['Icon'].'.png" alt="Discord server icon"><span class="tooltip">'.$row['Name'].'</span></a>';
         }
     }
     echo '</div>';
@@ -81,29 +97,29 @@ if(!isset($_SESSION['access_token'])){
         }
 
         ?>
-        <div class="default gameservers">
-            <div class="dotted-outline flex-center">
+        <div class="default gameservers<?php if(isset($guilds[$GUILD])) echo " hidden"; ?>">
+            <div class="dashed-outline text-center rounded">
                 Select a discord server from the left!
             </div>
         </div>
         <?php
         foreach($guilds as $guild){
-            echo '<div class="gameservers hidden" data-guild="'.$guild['id'].'">';
+            echo '<div class="gameservers'.($GUILD == $guild['id']?"":" hidden").'" data-guild="'.$guild['id'].'">';
 
             foreach(['active','archived'] as $active){
                 echo "<h3>".ucfirst($active)." Servers</h3>";
                 $i = 0;
                 foreach($guild['gameservers'][$active] as $gameserver){
-                    echo '<a class="gameserver" href="#" data-id="'.$gameserver['id'].'">';
+                    echo '<a class="gameserver" href="/dashboard/'.$guild['id'].'/'.$gameserver['id'].'/" data-id="'.$gameserver['id'].'">';
                     if($gameserver['running']) echo '<span class="speening"></span>';
-                    echo '  <img src="'.$gameserver['tiericon'].'" style="height:1em;" class="nointerpolate" alt="Icon for the "'.$gameserver['tiername'].'" tier">';
+                    echo '  <img src="'.$gameserver['tiericon'].'" style="height:1em;" class="nointerpolate" alt="Icon for the '.$gameserver['tiername'].' tier">';
                     echo '  '.$gameserver['name'].'<br><span class="ip">'.$gameserver['address'].'</span>';
                     echo '  <br><i class="dim" style="font-size: 0.8em;">'.$gameserver['gamename'].'</i>';
                     echo '</a>';
                     $i++;
                 }
                 if($i==0){
-                    echo '<a class="gameserver invalid" href="#">';
+                    echo '<a class="gameserver invalid" href="/dashboard/'.$guild['id'].'/">';
                     if($active=='active') echo '<i>Any server purchased by anyone on this discord server will appear here.<br>The server address is reserved for your game for up to a week of inactivity.</i>';
                     else echo '<i>If a server is not used for a week, it will be archived here.<br>From here, you can ressurect the server, or download the save file.</i>';
                     echo '</a>';
@@ -112,12 +128,38 @@ if(!isset($_SESSION['access_token'])){
             echo '</div>';
         }
         echo '</div>';
-    }
-    echo '<div class="default status"><h1>Hi hi</h1></div>';
-    ?>
+    }?>
+    <div class="statuses">
+        <div class="default status<?php if($GAMESERVER) echo " hidden"; // unable to check if it exists with the current structure... TODO: fix. ?>">
+        <div class="jumbotron dark">
+            <div class="content">
+                <h2>View the status of a game server here</h2>
+                <p>Here you can view the status of servers you can join, manage servers you own and add hours of uptime to your favourite servers.</p>
+            </div>
+            <div class="background"></div>
+        </div>
+        </div>
+        <?php
+        foreach($guilds as $guild){
+            foreach(['active','archived'] as $active){
+                foreach($guild['gameservers'][$active] as $gameserver){
+                    echo '<div class="status'.($GAMESERVER == $gameserver['id']?"":" hidden").'" data-id="'.$gameserver['id'].'">';
+                    echo '  <div class="jumbotron dark">';
+                    echo '      <div class="content">';
+                    echo '          <h2>'.$gameserver['name'].'</h2>';
+                    echo '          <p>'.(isset($TIERCLASS[$gameserver['tiername']])?$TIERCLASS[$gameserver['tiername']]:$gameserver['tiername']).' <i>'.$gameserver['gamename'].'</i> Hosting Plan</p>';
+                    echo '      </div>';
+                    echo '      <div class="background"></div>';
+                    echo '  </div>';
+                    echo '</div>';
+                }
+            }
+        }
+        ?>
+    </div>
 </div>
 <?php
 }
-$footerextra = '<script src="/js/dashboard.js?v=16"></script>';
+$footerextra = '<script src="/js/dashboard.js?v=22"></script>';
 require_once('../includes/footer.php');
 ?>

@@ -12,17 +12,24 @@ function urlstate(){
     if(guild){
         if(gsms){
             // show panel for this gameserver, failing that, the default.
+            $('.gameserver.active').removeClass('active');
+            $('.gameserver[data-id='+gsms+']').addClass('active');
+            $('.status:not(.hidden)').addClass('hidden');
             if($('.status[data-id='+gsms+']').removeClass('hidden').length == 0)
                 $('.status.default').removeClass('hidden');
+            document.title = $('.gameserver[data-id='+gsms+']').get(0).childNodes[3].nodeValue.substr(2) + " Dashboard - Pukeko Host";
+            // This is a very hacky way of getting the name of the gameserver, TODO: make something more sturdy.
         }else{
+            $('.gameserver.active').removeClass('active');
+            $('.status:not(.hidden)').addClass('hidden');
             $('.status.default').removeClass('hidden');
+            document.title = $('.guild[data-id='+guild+']').find('.tooltip').text() + " Dashboard - Pukeko Host";
         }
         $('.guild.active').removeClass('active');
         $('.guild[data-id='+guild+']').addClass('active');
         $('.gameservers').addClass('hidden');
         if($('.gameservers[data-guild='+guild+']').removeClass('hidden').length == 0)
             $('.gameservers.default').removeClass('hidden');
-        document.title = $('.guild[data-id='+guild+']').find('.tooltip').text() + " Dashboard - Pukeko Host";
     }else{
         $('.guild.active').removeClass('active');
         $('.gameservers').addClass('hidden');
@@ -35,7 +42,8 @@ function urlstate(){
 window.onpopstate = urlstate;
 
 $(document).ready(function(){
-    $('.guild:not(.hamburger)').on('click',function(){
+    $('.guild:not(.hamburger)').on('click',function(e){
+        e.preventDefault();
         if($(this).data('id')){
             history.pushState($(this).data('id'), $(this).find('.tooltip').text() + " Dashboard - Pukeko Host", "/dashboard/" + $(this).data('id') + "/");
             document.title = $(this).find('.tooltip').text() + " Dashboard - Pukeko Host";
@@ -44,8 +52,10 @@ $(document).ready(function(){
             document.title = "Dashboard - Pukeko Host";
         }
         urlstate();
+        return false;
     });
-    $('.gameserver').on('click',function(){
+    $('.gameserver').on('click',function(e){
+        e.preventDefault();
         if(guild){
             if($(this).data('id')){
                 history.pushState($(this).data('id'), $('.guild[data-id='+guild+']').find('.tooltip').text() + "Dashboard - Pukeko Host", "/dashboard/"+guild+"/"+$(this).data('id')+"/");
@@ -53,6 +63,8 @@ $(document).ready(function(){
                 history.pushState(guild, $('.guild[data-id='+guild+']').find('.tooltip').text() + "Dashboard - Pukeko Host", "/dashboard/"+guild+"/");
             }
         }
+        urlstate();
+        return false;
     });
     urlstate();
 });

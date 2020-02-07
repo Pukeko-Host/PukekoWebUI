@@ -166,6 +166,16 @@ img.nointerpolate{
 .blur{
   filter: blur(16px);
 }
+.dashed-outline{
+  border: #fff 0.2rem dashed;
+}
+.text-center{
+  text-align: center;
+}
+.rounded{
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+}
 
 .placeholder{
   animation: placeholderloop 1s ease 0.5s infinite;
@@ -275,7 +285,7 @@ nav .parent>.dropdown{
   flex-direction: column;
   box-shadow: 0 3px 6px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.1);
 }
-nav .parent:before{
+nav .parent::before{
   content: '▼';
   position: absolute;
   top: 1rem;
@@ -512,18 +522,18 @@ nav .parent:hover>.dropdown>a{
 *    Otherwise it causes space to appear at the top and bottom of elements
 *    that receive the `clearfix` class.
 * 2. The use of `table` rather than `block` is only necessary if using
-*    `:before` to contain the top-margins of child elements.
+*    `::before` to contain the top-margins of child elements.
 */
 
-.clearfix:before,
-.clearfix:after {
+.clearfix::before,
+.clearfix::after {
   content: " ";
   /* 1 */
   display: table;
   /* 2 */
 }
 
-.clearfix:after {
+.clearfix::after {
   clear: both;
 }
 
@@ -552,8 +562,8 @@ nav .parent:hover>.dropdown>a{
 
 @media print {
   *,
-  *:before,
-  *:after {
+  *::before,
+  *::after {
     background: transparent !important;
     color: #000 !important;
     /* Black prints faster */
@@ -564,18 +574,18 @@ nav .parent:hover>.dropdown>a{
   a:visited {
     text-decoration: underline;
   }
-  a[href]:after {
+  a[href]::after {
     content: " (" attr(href) ")";
   }
-  abbr[title]:after {
+  abbr[title]::after {
     content: " (" attr(title) ")";
   }
   /*
      * Don't show links that are fragment identifiers,
      * or use the `javascript:` pseudo protocol
      */
-  a[href^="#"]:after,
-  a[href^="javascript:"]:after {
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
     content: "";
   }
   pre {
