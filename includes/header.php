@@ -39,7 +39,7 @@ if(session_status() == PHP_SESSION_NONE) session_start();
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,400,400i,700,700i&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="/css/normalize.css">
-	<link rel="stylesheet" href="/css/main.css?v=127">
+	<link rel="stylesheet" href="/css/main.css?v=146">
 	<?php if(isset($headerextra)) echo $headerextra; ?>
 
 	<meta name="theme-color" content="#134FB0">

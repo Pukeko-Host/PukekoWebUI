@@ -1,16 +1,17 @@
 $(document).ready(function(){
     $('.serverping').each(function(){
-        console.log("pinging "+$(this).data('server')+"...");
-        this.pingStart = new Date();
+        var e = $(this);
+        console.log("pinging "+e.data('server')+"...");
         $.ajax({
-            url: 'https://'+$(this).data('server'),
-            success: function(){
-                $(this).text(new Date(this.pingStart - new Date()).getMilliseconds()/2+'ms');
+            url: 'https://ping.yiays.workers.dev/?ping='+encodeURIComponent('http://'+e.data('server')),
+            success: function(data){
+                console.log(data);
+                e.text(data);
             },
             error: function(){
-                $(this).html("<span class=\"red\">down</span>");
+                e.html("<span class=\"red\">Offline</span>");
             }
         });
-        $(this).text("Pinging...");
+        e.text("Pinging...");
     });
 });
