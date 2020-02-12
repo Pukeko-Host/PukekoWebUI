@@ -45,6 +45,16 @@ html,body{
 }
 
 /*
+ * No-JS rules
+ */
+html.no-js .js-only{
+  display: none;
+}
+html.js .nojs-only{
+  display: none;
+}
+
+/*
  * A better looking default horizontal rule
  */
 

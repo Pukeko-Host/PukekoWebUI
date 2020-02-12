@@ -8,4 +8,14 @@ $(document).ready(function(){
         $('.overlay').addClass('hidden');
         return false;
     });
+    $('.overlay>*').on('click',function(){
+        return false;
+    });
+    $('.copy').on('click',function(){
+        var $temp = $("<input>");
+        $('body').append($temp);
+        $temp.val($('#'+$(this).data('for')).text()).select();
+        document.execCommand('copy');
+        $temp.remove();
+    });
 });

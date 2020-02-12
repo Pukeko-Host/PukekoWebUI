@@ -159,7 +159,7 @@ require_once("../includes/header.php");
         <ol>
           <li><a href="https://discordapp.com/oauth2/authorize?client_id=667573427955302411&scope=bot&permissions=67161088">Add Mr. Pukeko to the desired discord server</a> if it isn't there already. <i>(Ask an admin if it isn't yours!)</i></li>
           <li>Type in the following command in a channel associated with the game...<br>
-            <code>p/server create <?php echo "$api gsms-$gsms tier-$tier"; ?></code></li>
+            <code id="createserver">p/server create <?php echo "$api gsms-$gsms tier-$tier"; ?></code> <button class="js-only copy" data-for="createserver">&#x1f4cb;</button></li>
           <li>Follow the instructions provided by Mr. Pukeko from there.</li>
         </ol>
       </p>
