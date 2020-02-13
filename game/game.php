@@ -3,6 +3,7 @@ $params = explode('/', substr($_SERVER['REQUEST_URI'], 6));
 $api = $params[0]? $params[0]: NULL;
 $gsms = $params[1]? $params[1]: NULL;
 $tier = $params[2]? $params[2]: NULL;
+$remainingdeals = NULL;
 
 if(!isset($api)){
   header("Location: /", true, 303);
@@ -94,6 +95,7 @@ require_once("../includes/header.php");
             die($conn->error);
           }
           while($row2 = $result->fetch_assoc()){
+            if($gsms == $row['Id'] && $tier == $row2['TierNumber']) $remainingdeals = $row2['IsAvailable'];
             echo "    <a href=\"/game/$api/".$row['Id']."/".$row2['TierNumber']."/\" class=\"btn\">";
             echo "      <img class=\"nointerpolate\" style=\"height:2em;margin:-0.5em;margin-right:0;\" src=\"".$row2['Icon']."\"> ".$row2['IsAvailable'];
             echo "    </a>";
@@ -146,7 +148,7 @@ require_once("../includes/header.php");
   </div>
 </div>
 <div class="overlay flex flex-center<?php if(!($api&&$gsms)) echo ' hidden'; ?>">
-  <div class="card half light">
+  <div class="card half light<?php if(!$remainingdeals) echo ' hidden'; ?>">
     <div class="background themegradient dark" style="padding: 2rem; height: auto;">
       <a href="<?php echo "/game/$api/$gsms/"; ?>" class="close">&times;</a>
       <h1>Selection completed!</h1>
@@ -163,6 +165,16 @@ require_once("../includes/header.php");
           <li>Follow the instructions provided by Mr. Pukeko from there.</li>
         </ol>
       </p>
+    </div>
+  </div>
+  <div class="card half light<?php if($remainingdeals) echo ' hidden'; ?>">
+    <div class="background themegradient-error dark" style="padding: 2rem; height: auto;">
+      <a href="<?php echo "/game/$api/$gsms/"; ?>" class="close">&times;</a>
+      <h1>This selection is unavailable.</h1>
+    </div>
+    <div class="content">
+      <p>Unfortunately, this tier on this server is currently unavailable.</p>
+      <p>You'll need to select either a different tier or a different server to continue.</p>
     </div>
   </div>
 </div>

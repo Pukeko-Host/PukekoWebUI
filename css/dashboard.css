@@ -44,6 +44,7 @@
     left: 0.6rem;
     margin-top: 0.4rem;
     border: 0.15rem solid white;
+    background: #fff;
 }
 .guild.invalid{
     background: rgb(85, 19, 19);
@@ -64,6 +65,13 @@
 .guild.invalid:hover{
     background: rgb(122, 35, 35);
 }
+.guild.drop{
+    border-radius: 30%;
+    background: rgba(255,255,255,0.25)
+}
+.guild.drop::before{
+    content: none;
+}
 .guild>img{
     border-radius: 50%;
     transition: border-radius 250ms;
@@ -75,7 +83,7 @@
     background: #ddd;
 }
 .guild:hover>img, .guild.active>img{
-    border-radius: 15%;
+    border-radius: 30%;
 }
 .guild::before{
     content: "";

@@ -11,7 +11,7 @@ $title = "Dashboard";
 $description = "Manage Pukeko servers you share with your fellow discord users. Anyone on any discord server can create a game server to play with others on the spot.";
 $tags = "dashboard,control panel,settings,customize,customise,admin,operator,op,terminal,command line";
 $compactheader = true;
-$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=65">';
+$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=71">';
 require_once('../includes/header.php');
 if(!isset($_SESSION['access_token'])){
 ?>
@@ -74,15 +74,18 @@ if(!isset($_SESSION['access_token'])){
                 <span></span>
             </div>
         </label>
+        <div class="guild drop"></div>
     <?php
     $guilds = [];
     $result = $conn->query("SELECT guild.* FROM guild RIGHT JOIN userguild ON guild.GuildId = userguild.guildId WHERE userguild.userId = ".$_SESSION['user']->id);
     if(!$result){
-        echo '<div class="invalid guild"><span class="tooltip">Failed to load your guilds; '.$conn->error.'</span></div>';
+        echo '<div class="invalid guild" style="order: 102;"><span class="tooltip">Failed to load your guilds; '.$conn->error.'</span></div>';
     }else{
         while($row = $result->fetch_assoc()){
             $guilds[$row['GuildId']]=array('id'=>$row['GuildId'],'name'=>$row['Name'],'icon'=>"https://cdn.discordapp.com/icons/".$row['GuildId']."/".$row['Icon'].".png",'gameservers'=>array('active'=>array(),'archived'=>array()));
-            echo '<a href="/dashboard/'.$row['GuildId'].'/" class="guild" data-id="'.$row['GuildId'].'"><img src="https://cdn.discordapp.com/icons/'.$row['GuildId'].'/'.$row['Icon'].'.png" alt="Discord server icon"><span class="tooltip">'.$row['Name'].'</span></a>';
+            echo '<a href="/dashboard/'.$row['GuildId'].'/" class="guild" data-id="'.$row['GuildId'].'" style="order:'.($row['Pos']? $row['Pos']: '101').'" draggable="true">';
+            echo '  <img src="https://cdn.discordapp.com/icons/'.$row['GuildId'].'/'.$row['Icon'].'.png" alt="Discord server icon" draggable="false"><span class="tooltip">'.$row['Name'].'</span>';
+            echo '</a>';
         }
     }
     echo '</div>';

@@ -109,7 +109,7 @@ if(session('access_token')) {
 			<h2>Logged In</h2>
 			<p>Welcome, <?php echo $user->username;?></p>
 		</div>
-		<div class="footer" style="text-align:center;">
+		<div class="footer">
 			<a href="?logout" class="btn">Logout</a>
 		</div>
 		<div class="background" style="background:black;">
