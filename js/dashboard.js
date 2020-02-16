@@ -67,4 +67,35 @@ $(document).ready(function(){
         return false;
     });
     urlstate();
+    
+    // Guild drag and drop
+    let draggedguild = null;
+    $('.guild').on('dragstart', function(e){
+        draggedguild = e.target;
+    });
+    function getGuildPos(my){
+        var max = 1;
+        var closest = 1000000;
+        $('.guild').each(function(i) {
+            var pos = my - $(this).position().top;
+            if(pos > 0 && pos < closest && $(this).css('order') > max){
+                max = $(this).css('order');
+            }
+        });
+        return max-1;
+    }
+    $('.guilds').on('dragover', function(e){
+        e.preventDefault();
+        var topPos = getGuildPos(e.pageY);
+        $('.droppreview').css({'order': topPos}).removeClass('hidden');
+    });
+    $('.guilds').on('mouseleave', function(e){
+        $('.droppreview').addClass('hidden');
+    });
+    $('.guild').on('drop', function(e){
+        e.preventDefault();
+        var topPos = getGuildPos(e.pageY);
+        $(draggedguild).css({'order': topPos});
+        $('.droppreview').addClass('hidden');
+    });
 });

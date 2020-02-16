@@ -8,6 +8,8 @@
 }
 .guilds{
     position: absolute;
+    display: flex;
+    flex-direction: column;
     top: 0;
     left: 0;
     width: 3rem;
@@ -65,9 +67,9 @@
 .guild.invalid:hover{
     background: rgb(122, 35, 35);
 }
-.guild.drop{
+.droppreview{
     border-radius: 30%;
-    background: rgba(255,255,255,0.25)
+    background: rgba(255,255,255,0.25);
 }
 .guild.drop::before{
     content: none;
