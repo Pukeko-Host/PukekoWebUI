@@ -11,7 +11,7 @@ $title = "Dashboard";
 $description = "Manage Pukeko servers you share with your fellow discord users. Anyone on any discord server can create a game server to play with others on the spot.";
 $tags = "dashboard,control panel,settings,customize,customise,admin,operator,op,terminal,command line";
 $compactheader = true;
-$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=74">';
+$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=103">';
 require_once('../includes/header.php');
 if(!isset($_SESSION['access_token'])){
 ?>
@@ -153,7 +153,21 @@ if(!isset($_SESSION['access_token'])){
                     echo '          <h2>'.$gameserver['name'].'</h2>';
                     echo '          <p>'.(isset($TIERCLASS[$gameserver['tiername']])?$TIERCLASS[$gameserver['tiername']]:$gameserver['tiername']).' <i>'.$gameserver['gamename'].'</i> Hosting Plan</p>';
                     echo '      </div>';
+                    echo '      <div class="footer">';
+                    echo '          <a class="btn">Stop Server</a>';
+                    echo '      </div>';
                     echo '      <div class="background"></div>';
+                    echo '  </div>';
+                    echo '  <div class="card terminal dark">';
+                    echo '      <div class="header"><h4>Terminal</h4></div>';
+                    echo '      <div class="content">';
+                    echo '          <div class="row">Minecraft Console</div>';
+                    echo '          <div class="row">Connecting to terminal...</div>';
+                    echo '          <form class="input" method="POST">';
+                    echo '              <span class="gt">&gt;</span><input type="text" name="cmd" placeholder="p/help">';
+                    echo '              <input type="submit" class="btn" value="Send">';
+                    echo '          </form>';
+                    echo '      </div>';
                     echo '  </div>';
                     echo '</div>';
                 }
