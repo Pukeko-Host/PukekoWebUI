@@ -1,5 +1,6 @@
 <?php
 // Authorize with discord (define('OAUTH2_CLIENT_ID') and define('OAUTH2_CLIENT_SECRET'))
+
 require_once('../../takahe.discord.php');
 session_start();
 
@@ -47,7 +48,7 @@ if(get('code')) { // When Discord redirects the user back here, there will be a 
 			die();
 		}else{
 			foreach($guilds as &$guild){
-				$conn->query("CALL AddGuild(".$guild->id.",'".$guild->icon."',\"".$conn->escape_string($guild->name)."\",".$user->id.")");
+				$conn->query("CALL AddGuild(".$guild->id.",".$user->id.")");
 			}
 			$result = $conn->query("SELECT @UserId;");
 			$_SESSION['userid'] = $result->fetch_array()[0][0];

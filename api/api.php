@@ -2,6 +2,7 @@
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *"); // This is for debug, on release this should be *.yiays.com
 
+// API response framework
 define('VALID_RESPONSE',    200);
 define('VALIDATION_ERROR',  400);
 define('UNAUTHORIZED',      401);
@@ -18,12 +19,27 @@ $CODE_DESC = [
 function generic_error($error){
     global $CODE_DESC;
     http_response_code($error);
-    die(json_encode(['desc'=>$CODE_DESC[$error]]));
+    die(json_encode(['desc' => $CODE_DESC[$error]]));
+}
+function specific_error($error, $desc){
+    global $CODE_DESC;
+    http_response_code($error);
+    die(json_encode(['desc' => $desc]));
 }
 
+$method = $_SERVER['REQUEST_METHOD'];
+$params = explode('/', substr($_SERVER['REQUEST_URI'], 5));
 
-
-
+if(array_count_values($params)>0){
+    switch($params[0]){
+        case "test":
+            http_response_code(VALID_RESPONSE);
+            die(json_encode(['desc' => "$_SERVER[REQUEST_URI]"]));
+        break;
+        
+        
+    }
+}
 
 // If nothing else is called...
 generic_error(UNKNOWN_REQUEST);

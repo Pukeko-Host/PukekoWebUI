@@ -77,22 +77,34 @@ if(!isset($_SESSION['access_token'])){
         <div class="droppreview hidden"></div>
     <?php
     $guilds = [];
-    $result = $conn->query("SELECT guild.* FROM guild RIGHT JOIN userguild ON guild.GuildId = userguild.guildId WHERE userguild.userId = ".$_SESSION['user']->id);
-    if(!$result){
-        echo '<div class="invalid guild" style="order: 102;"><span class="tooltip">Failed to load your guilds; '.$conn->error.'</span></div>';
-    }else{
-        $defaultpos = 101;
-        while($row = $result->fetch_assoc()){
-            $guilds[$row['GuildId']]=array('id'=>$row['GuildId'],'name'=>$row['Name'],'icon'=>"https://cdn.discordapp.com/icons/".$row['GuildId']."/".$row['Icon'].".png",'gameservers'=>array('active'=>array(),'archived'=>array()));
-            echo '<a href="/dashboard/'.$row['GuildId'].'/" class="guild" data-id="'.$row['GuildId'].'" style="order:'.($row['Pos']? $row['Pos']: $defaultpos++).'" draggable="true">';
-            echo '  <img src="https://cdn.discordapp.com/icons/'.$row['GuildId'].'/'.$row['Icon'].'.png" alt="Discord server icon" draggable="false"><span class="tooltip">'.$row['Name'].'</span>';
-            echo '</a>';
+    
+    foreach($_SESSION['guilds'] as $guild){
+        $result = $conn->query("SELECT * FROM userguild WHERE userId = ".$_SESSION['user']->id." AND guildId = ".$guild->id);
+        if(!$result){
+            echo '<div class="invalid guild" style="order: 102;"><span class="tooltip">Failed to load your guilds</span></div>';
+        }else{
+            $defaultpos = 101;
+            while($row = $result->fetch_assoc()){
+                $guilds[$guild->id]=array('id'=>$guild->id,'name'=>$guild->name,'icon'=>"https://cdn.discordapp.com/icons/".$guild->id."/".$guild->icon.".png",'gameservers'=>array('active'=>array(),'archived'=>array()));
+                echo '<a href="/dashboard/'.$guild->id.'/" class="guild" data-id="'.$guild->id.'" style="order:'.($row['Pos']? $row['Pos']: $defaultpos++).'" draggable="true">';
+                echo '  <img src="https://cdn.discordapp.com/icons/'.$guild->id.'/'.$guild->icon.'.png" alt="Discord server icon" draggable="false"><span class="tooltip">'.$guild->name.'</span>';
+                echo '</a>';
+            }
         }
     }
+    
     echo '</div>';
     echo '<input type="checkbox" id="showgameservers" checked style="display:none;">';
     echo '<div class="gameserverscontainer">';
-    $result = $conn->query("SELECT gameserver.*,game.Name AS gamename,gametier.Icon,gametier.Name AS tiername,gsms.DomainName FROM (((gameserver LEFT JOIN game ON gameserver.GameId = game.Id) LEFT JOIN gametier ON game.Id = gametier.GameId AND gameserver.TierId = gametier.TierNumber) LEFT JOIN gsms ON gameserver.GMSId = gsms.Id) LEFT JOIN guild ON gameserver.GuildId = guild.GuildId GROUP BY gameserver.Id ORDER BY gameserver.GuildId ASC, gameserver.Active DESC");
+    $result = $conn->query("SELECT gameserver.*,game.Name AS gamename,gametier.Icon,gametier.Name AS tiername,gsms.DomainName
+                            FROM (((gameserver
+                                LEFT JOIN game ON gameserver.GameId = game.Id)
+                                LEFT JOIN gametier ON game.Id = gametier.GameId AND gameserver.TierId = gametier.TierNumber)
+                                LEFT JOIN gsms ON gameserver.GMSId = gsms.Id)
+                                LEFT JOIN userguild ON gameserver.GuildId = userguild.GuildId
+                            WHERE userguild.userId = ".$_SESSION['user']->id."
+                            GROUP BY gameserver.Id
+                            ORDER BY gameserver.GuildId ASC, gameserver.Active DESC");
     if(!$result){
         echo '<div class="default gameservers">Failed to load the list of servers; '.$conn->error.'</div>';
     }else{
@@ -125,7 +137,7 @@ if(!isset($_SESSION['access_token'])){
                 if($i==0){
                     echo '<a class="gameserver invalid" href="/dashboard/'.$guild['id'].'/">';
                     if($active=='active') echo '<i>Any server purchased by anyone on this discord server will appear here.<br>The server address is reserved for your game for up to a week of inactivity.</i>';
-                    else echo '<i>If a server is not used for a week, it will be archived here.<br>From here, you can ressurect the server, or download the save file.</i>';
+                    else echo '<i>If a server is not used for 2 weeks, it will be archived here.<br>From here, you can ressurect the server, or download the save file.</i>';
                     echo '</a>';
                 }
             }
