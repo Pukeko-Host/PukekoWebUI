@@ -1,2 +1,1 @@
-<?php
-testing()
+<h1>Uh oh</h1>

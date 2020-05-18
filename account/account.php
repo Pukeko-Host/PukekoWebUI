@@ -143,7 +143,7 @@ if(session('access_token')) {
 }
 ?>
 <div class="wrapper main">
-	<sub><b>By signing in to Pukeko Host, you are accepting the <a href="/terms">Terms of Service and Privacy Policy</a>.</b></sub>
+	<sub><b>By signing in to Pukeko Host, you are accepting the <a href="/terms/">Terms of Service and Privacy Policy</a>.</b></sub>
 </div>
 <?php
 require_once('../includes/footer.php');
