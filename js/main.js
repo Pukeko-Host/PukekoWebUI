@@ -17,5 +17,6 @@ $(document).ready(function(){
         $temp.val($('#'+$(this).data('for')).text()).select();
         document.execCommand('copy');
         $temp.remove();
+        $(this).text("✓");
     });
 });

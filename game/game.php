@@ -1,24 +1,25 @@
 <?php
 $params = explode('/', substr($_SERVER['REQUEST_URI'], 6));
-$api = $params[0]? $params[0]: NULL;
-$gsms = $params[1]? $params[1]: NULL;
-$tier = $params[2]? $params[2]: NULL;
+$apiname = count($params)>0? $params[0]: NULL;
+$gsms = count($params)>1? $params[1]: NULL;
+$tier = count($params)>2? $params[2]: NULL;
 $remainingdeals = NULL;
 
-if(!isset($api)){
+if(!isset($apiname)){
   header("Location: /", true, 303);
   die();
 }
 
 require_once('../../takahe.conn.php');
+require_once('../api/games.php');
 
-$result = $conn->query("SELECT * FROM game WHERE API = \"$api\"");
-if(!$result || $result->num_rows<1){
+$memes = new games($conn);
+$game = $memes->get_game(null, $apiname);
+if(!$game || count($game)<1){
   header("Location: /", true, 303);
   die();
 }
 
-$game = $result->fetch_assoc();
 $gameId = $game['Id'];
 
 $title = $game['Name'];
@@ -96,12 +97,12 @@ require_once("../includes/header.php");
           }
           while($row2 = $result->fetch_assoc()){
             if($gsms == $row['Id'] && $tier == $row2['TierNumber']) $remainingdeals = $row2['IsAvailable'];
-            echo "    <a href=\"/game/$api/".$row['Id']."/".$row2['TierNumber']."/\" class=\"btn\">";
+            echo "    <a href=\"/game/$apiname/".$row['Id']."/".$row2['TierNumber']."/\" class=\"btn\">";
             echo "      <img class=\"nointerpolate\" style=\"height:2em;margin:-0.5em;margin-right:0;\" src=\"".$row2['Icon']."\"> ".$row2['IsAvailable'];
             echo "    </a>";
           }
           echo "    </div>";
-          echo "    <a href=\"/game/$api/".$row['Id']."/".($tier? $tier.'/': '')."\" class=\"btn\">Select</a>";
+          echo "    <a href=\"/game/$apiname/".$row['Id']."/".($tier? $tier.'/': '')."\" class=\"btn\">Select</a>";
           echo "  </div>";
           echo "</div>";
         }
@@ -139,7 +140,7 @@ require_once("../includes/header.php");
           echo "    </tr>";
           echo "  </table>";
           echo "  <div class=\"footer\">";
-          echo "    <a href=\"/game/$api/$gsms/".$row['TierNumber']."/\" class=\"btn\">Select</a>";
+          echo "    <a href=\"/game/$apiname/$gsms/".$row['TierNumber']."/\" class=\"btn\">Select</a>";
           echo "  </div>";
           echo "</div>";
         }
@@ -147,10 +148,10 @@ require_once("../includes/header.php");
     ?>
   </div>
 </div>
-<div class="overlay flex flex-center<?php if(!($api&&$gsms)) echo ' hidden'; ?>">
+<div class="overlay flex flex-center<?php if(!($apiname&&$gsms)) echo ' hidden'; ?>">
   <div class="card half light<?php if(!$remainingdeals) echo ' hidden'; ?>">
     <div class="background themegradient dark" style="padding: 2rem; height: auto;">
-      <a href="<?php echo "/game/$api/$gsms/"; ?>" class="close">&times;</a>
+      <a href="<?php echo "/game/$apiname/$gsms/"; ?>" class="close">&times;</a>
       <h1>Selection completed!</h1>
       <?php echo "$tiername Tier Hosting on $gsmsname"; ?>
     </div>
@@ -159,9 +160,9 @@ require_once("../includes/header.php");
       <p>
         Here's what to do to continue...
         <ol>
-          <li><a href="https://discordapp.com/oauth2/authorize?client_id=667573427955302411&scope=bot&permissions=67161088">Add Mr. Pukeko to the desired discord server</a> if it isn't there already. <i>(Ask an admin if it isn't yours!)</i></li>
+          <li><a href="https://discordapp.com/oauth2/authorize?client_id=700549643045568522&scope=bot&permissions=67161088">Add Mr. Pukeko to the desired discord server</a> if it isn't there already. <i>(Ask an admin if it isn't yours!)</i></li>
           <li>Type in the following command in a channel associated with the game...<br>
-            <code id="createserver">p/server create <?php echo "$api gsms-$gsms tier-$tier"; ?></code> <button class="js-only copy" data-for="createserver">&#x1f4cb;</button></li>
+            <code id="createserver">p/server create <?php echo "$apiname gsms-$gsms tier-$tier"; ?></code> <button class="js-only copy" data-for="createserver">&#x1f4cb;</button></li>
           <li>Follow the instructions provided by Mr. Pukeko from there.</li>
         </ol>
       </p>
@@ -169,7 +170,7 @@ require_once("../includes/header.php");
   </div>
   <div class="card half light<?php if($remainingdeals) echo ' hidden'; ?>">
     <div class="background themegradient-error dark" style="padding: 2rem; height: auto;">
-      <a href="<?php echo "/game/$api/$gsms/"; ?>" class="close">&times;</a>
+      <a href="<?php echo "/game/$apiname/$gsms/"; ?>" class="close">&times;</a>
       <h1>This selection is unavailable.</h1>
     </div>
     <div class="content">

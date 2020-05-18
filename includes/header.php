@@ -39,7 +39,7 @@ if(session_status() == PHP_SESSION_NONE) session_start();
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,400,400i,700,700i&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="/css/normalize.css">
-	<link rel="stylesheet" href="/css/main.css?v=157">
+	<link rel="stylesheet" href="/css/main.css?v=158">
 	<?php if(isset($headerextra)) echo $headerextra; ?>
 
 	<meta name="theme-color" content="#134FB0">
@@ -76,7 +76,7 @@ if(session_status() == PHP_SESSION_NONE) session_start();
 			</nav>
 		</div>
 		<div class="content">
-			<a class="brand" href="/">Pukeko<span class="dim">Host</span></a>
+			<a class="brand" href="/"><h1>Pukeko<span class="dim">Host</span></h1></a>
 			<?php
 				if(isset($subtitle)) echo "<h2>$subtitle</h2>";
 			?>

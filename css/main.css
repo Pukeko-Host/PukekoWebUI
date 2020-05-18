@@ -287,7 +287,7 @@ a:hover{
 .jumbotron.compact>.footer + .content{
   top: calc(50% - 0.5rem);
 }
-.brand{
+.brand>h1{
   font-size: min(10vw,10rem);
   color: #fff!important;
   text-decoration: none!important;
