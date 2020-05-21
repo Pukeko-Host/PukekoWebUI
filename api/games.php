@@ -23,8 +23,21 @@ class games {
 			case "game":
 				switch($this->ctx->method){
 					case "GET":
-						if(count($this->ctx->params)>1)
+						if(count($this->ctx->params)==2)
 							return json_encode($this->get_game($this->ctx->params[1]));
+						elseif(count($this->ctx->params)==3){
+							switch($this->ctx->params[2]){
+								case "gsmses":
+									return json_encode($this->get_game_gsmses($this->ctx->params[1]));
+								break;
+								case "tiers":
+									return json_encode($this->get_game_tiers($this->ctx->prarms[1]));
+								break;
+								default:
+									return generic_error(UNKNOWN_REQUEST);
+								break;
+							}
+						}
 						else
 							return generic_error(VALIDATION_ERROR);
 					break;
@@ -62,6 +75,34 @@ class games {
 			specific_error(SERVER_ERROR, $result->error);
 		}
 		return $result->fetch_assoc();
+	}
+	
+	function get_game_gsmses($id){
+		$id = intval($id);
+		$result = $this->conn->query("SELECT gsms.* FROM gamesupport LEFT JOIN gsms ON gamesupport.ServerId = gsms.Id  WHERE gamesupport.GameId = $id");
+		
+		if(!$result){
+			specific_error(SERVER_ERROR, $result->error);
+		}
+		$resultobject = array();
+		while($row = $result->fetch_assoc()){
+			$resultobject[]=$row;
+		}
+		return $resultobject;
+	}
+	
+	function get_game_tiers($id){
+		$id = intval($id);
+		$result = $this->conn->query("SELECT gametier.* FROM gametier WHERE GameId = $id ORDER BY TierNumber ASC");
+		
+		if(!$result){
+			specific_error(SERVER_ERROR, $result->error);
+		}
+		$resultobject = array();
+		while($row = $result->fetch_assoc()){
+			$resultobject[]=$row;
+		}
+		return $resultobject;
 	}
 }
 

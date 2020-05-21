@@ -39,7 +39,7 @@ if(session_status() == PHP_SESSION_NONE) session_start();
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,400,400i,700,700i&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="/css/normalize.css">
-	<link rel="stylesheet" href="/css/main.css?v=158">
+	<link rel="stylesheet" href="/css/main.css?v=162">
 	<?php if(isset($headerextra)) echo $headerextra; ?>
 
 	<meta name="theme-color" content="#134FB0">
@@ -56,14 +56,16 @@ if(session_status() == PHP_SESSION_NONE) session_start();
 			<nav>
 				<a href="/">Home</a>
 				<?php
-				$result = $conn->query("SELECT Name,API FROM game");
+				require_once(dirname(__DIR__)."/api/games.php");
+				$games = new games($conn);
+				$result = $games->get_games();
 				if($result){
 				?>
 				<div class="parent">
 					<a href="#">Games</a>
 					<div class="dropdown" href="#">
 						<?php
-						while($row = $result->fetch_assoc()){
+						foreach($result as $row){
 							echo "<a href=\"/game/".$row['API']."\">".$row['Name']."</a>";
 						} ?>
 					</div>

@@ -13,7 +13,7 @@ class Request {
         if(substr($url, 0, 5) == "/api/"){
             $this->url = $url;
             $this->method = $method;
-            $this->params = explode('/', substr($url, 5));
+            $this->params = explode('/', substr(strtolower($url), 5));
             if(end($this->params) == '') array_pop($this->params);
         }else{
             throw new Exception('Invalid api path.');
@@ -36,11 +36,26 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
                 $games = new games($conn, $ctx);
                 print($games->run());
             break;
+            case "gsmses":
+            case "gsms":
+                require_once("gsmses.php");
+                $gsmses = new gsmses($conn, $ctx);
+                print($gsmses->run());
+            break;
             default:
                 generic_error(UNKNOWN_REQUEST);
         }
     }else{
-        print(json_encode(['desc'=>"Welcome to PukekoAPI!"]));
+        print(json_encode(['desc'=>"Welcome to PukekoAPI!",
+        'queries'=>[
+            'GET /games/',
+            'GET /game/{id}/',
+            'GET /game/{id}/gsmses',
+            'GET /game/{id}/tiers',
+            'GET /game/{apiname}/',
+            'GET /gsmses/',
+            'GET /gsms/{id}/'
+        ]]));
     }
     $conn->close();
 }

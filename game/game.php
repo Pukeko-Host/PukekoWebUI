@@ -13,14 +13,16 @@ if(!isset($apiname)){
 require_once('../../takahe.conn.php');
 require_once('../api/games.php');
 
-$memes = new games($conn);
-$game = $memes->get_game(null, $apiname);
+$gamesapi = new games($conn);
+$game = $gamesapi->get_game(null, $apiname);
 if(!$game || count($game)<1){
   header("Location: /", true, 303);
   die();
 }
 
-$gameId = $game['Id'];
+$gsmses = $gamesapi->get_game_gsmses($game['Id']);
+
+$tiers = $gamesapi->get_game_tiers($game['Id']);
 
 $title = $game['Name'];
 $description = "Get a casual ".$game['Name']." server and pay by the hour when you want to hop on.\nLink the game server to a discord server and any member of the server can pay for an hour when they want to play, or everyone can pool together some change to keep the server running.";
@@ -34,11 +36,11 @@ require_once("../includes/header.php");
     <div class="card full" style="background: #134FB0;background: linear-gradient(to left, #134FB0 0%,#30475D 100%);min-width: 50rem;text-align:left;">
       <?php
         echo "<div class=\"game card third\" style=\"margin: -1rem 1rem -1rem -1rem;float:left;\">";
-        echo "  <div class=\"background\" style=\"background-image:url('".$game['Background']."');\">";
-        echo "    <img class=\"foreground\" src=\"".$game['Foreground']."\" alt=\"".$game['Name']."\">";
+        echo "  <div class=\"background\" style=\"background-image:url('$game[Background]');\">";
+        echo "    <img class=\"foreground\" src=\"$game[Foreground]\" alt=\"$game[Name]\">";
         echo "  </div>";
         echo "  <div class=\"content\">";
-        echo "    <h3>".$game['Name']."</h3>";
+        echo "    <h3>$game[Name]</h3>";
         echo "    <ul>".str_replace(" - ","<li>",str_replace("\n","</li>",$game['Perks']))."</li></ul>";
         echo "  </div>";
         echo "</div>";
@@ -51,12 +53,11 @@ require_once("../includes/header.php");
   <p>Select a server with the best ping and specs for your needs. <i>Keep in mind this server may not be dedicated solely to you.</i></p>
   <div class="slider">
     <?php
-      $result = $conn->query("SELECT * FROM gsms LEFT JOIN gamesupport ON gsms.Id = gamesupport.ServerId WHERE gamesupport.GameId = ".$gameId);
-      if(!$result || $result->num_rows<1){
+      if(!$gsmses || count($gsmses)<1){
         echo "<p><b>All of our servers appear to be fully-booked for this game!</b></p>";
         echo "<p>Please check back later!</p>";
       }else{
-        while($row = $result->fetch_assoc()){
+        foreach($gsmses as $row){
           if($gsms == $row['Id']) $gsmsname = $row['DomainName'];
           echo "<div class=\"card third gsms".($gsms == $row['Id']? ' selected': '')."\">";
           echo "  <table style=\"min-height: 12rem;\">";
@@ -88,7 +89,7 @@ require_once("../includes/header.php");
                                   FROM gametier
                                     INNER JOIN gameserverport ON gametier.GameId = gameserverport.GameId AND gametier.TierNumber = gameserverport.TierId
                                     LEFT JOIN gameserver ON gameserverport.Port = gameserver.Port AND gameserver.GMSId = ".$row['Id']."
-                                  WHERE gametier.GameId = $gameId
+                                  WHERE gametier.GameId = $game[Id]
                                     AND gameserver.Port IS NULL
                                   GROUP BY gametier.TierNumber"
                                 );
@@ -113,12 +114,11 @@ require_once("../includes/header.php");
   <p>Select a tier of hosting that suits your needs, the higher the price, the less compromises. <i id="pricedisclaimer">Exact prices will vary depending on the server you select.</i></p>
   <div class="slider">
     <?php
-      $result = $conn->query("SELECT * FROM gametier WHERE gameId = ".$gameId." ORDER BY TierNumber ASC");
-      if(!$result || $result->num_rows<1){
+      if(!$tiers || count($tiers)<1){
         echo "<p><b>Our tiered offerings for this game are still on their way.</b></p>";
         echo "<p>Please check back later!</p>";
       }else{
-        while($row = $result->fetch_assoc()){
+        foreach($tiers as $row){
           if($tier == $row['TierNumber']){
             $tiername = $row['Name'];
           }
@@ -130,7 +130,7 @@ require_once("../includes/header.php");
           echo "        <img src=\"".$row['Icon']."\" style=\"width:100%;\" class=\"nointerpolate\" alt=\"Icon for the ".$row['Name']." tier\">";
           echo "      </td>";
           echo "      <td>";
-          echo "        <ul>".str_replace(" - ","<li>",str_replace("\n","</li>",$row['TierPerks']))."</li></ul>";
+          echo "        <ul>".str_replace(" - ","<li>",str_replace("\n","</li>",$row['Perks']))."</li></ul>";
           echo "      </td>";
           echo "    </tr>";
           echo "    <tr height=\"3rem\">";
