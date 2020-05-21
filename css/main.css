@@ -294,7 +294,7 @@ a:hover{
   margin: 0;
   font-weight: 100;
 }
-.compact .brand{
+.compact .brand>h1{
   font-size: min(10vw, 6rem);
 }
 .jumbotron>.background{
@@ -397,7 +397,7 @@ nav .parent:hover>.dropdown>a{
 }
 .wrapper,wrapper{
   display: block;
-  margin: 0 4vw;
+  margin: 0 8vw;
 }
 
 .overlay{
@@ -532,23 +532,29 @@ nav .parent:hover>.dropdown>a{
    Layout system
    ========================================================================== */
 
+:root{
+  --third: 26vw;
+  --half: 40vw;
+  --full: 82.5vw;
+}
+
 .third{
-  width: 29vw;
+  width: var(--third);
   box-sizing: border-box;
 }
 .half{
-  width: 44.5vw;
+  width: var(--half);
   box-sizing: border-box;
 }
 .full{
-  width: 87vw;
+  width: var(--full);
 }
 @media only screen and (max-width: 65rem){
   .third{
-    width: 44.5vw;
+    width: var(--half);
   }
   .half{
-    width: 87vw;
+    width: var(--full);
   }
   .games .half{
     width: 100%;
@@ -559,7 +565,7 @@ nav .parent:hover>.dropdown>a{
 }
 @media only screen and (max-width: 35rem){
   .third{
-    width: 87vw;
+    width: var(--full);
   }
   .games .third{
     width: 100%;

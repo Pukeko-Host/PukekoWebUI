@@ -1,4 +1,5 @@
 .dashboard{
+    overflow-x: hidden;
     position: relative;
     width: 100%;
     height: max(100vh, 40rem);

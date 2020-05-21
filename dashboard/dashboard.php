@@ -11,7 +11,7 @@ $title = "Dashboard";
 $description = "Manage Pukeko servers you share with your fellow discord users. Anyone on any discord server can create a game server to play with others on the spot.";
 $tags = "dashboard,control panel,settings,customize,customise,admin,operator,op,terminal,command line";
 $compactheader = true;
-$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=103">';
+$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=104">';
 require_once('../includes/header.php');
 if(!isset($_SESSION['access_token'])){
 ?>
