@@ -2,17 +2,16 @@
 require_once(dirname(__DIR__)."/api/error.php");
 
 class gsmses {
-	function __construct($conn, $ctx=null)
+	function __construct($conn)
 	{
-		$this->ctx = $ctx;
 		$this->conn = $conn;
 	}
 	
-	function run()
+	function resolve($ctx)
 	{
-		switch($this->ctx->params[0]){
+		switch($ctx->params[0]){
 			case "gsmses":
-				switch($this->ctx->method){
+				switch($ctx->method){
 					case 'GET':
 						return json_encode($this->get_gsmses());
 					break;
@@ -21,10 +20,10 @@ class gsmses {
 				}
 			break;
 			case "gsms":
-				switch($this->ctx->method){
+				switch($ctx->method){
 					case "GET":
-						if(count($this->ctx->params)>1)
-							return json_encode($this->get_gsms($this->ctx->params[1]));
+						if(count($ctx->params)>1)
+							return json_encode($this->get_gsms($ctx->params[1]));
 						else
 							return generic_error(VALIDATION_ERROR);
 					break;

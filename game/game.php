@@ -21,8 +21,10 @@ if(!$game || count($game)<1){
 }
 
 $gsmses = $gamesapi->get_game_gsmses($game['Id']);
+$gsmsname = "";
 
 $tiers = $gamesapi->get_game_tiers($game['Id']);
+$tiername = "";
 
 $title = $game['Name'];
 $description = "Get a casual ".$game['Name']." server and pay by the hour when you want to hop on.\nLink the game server to a discord server and any member of the server can pay for an hour when they want to play, or everyone can pool together some change to keep the server running.";

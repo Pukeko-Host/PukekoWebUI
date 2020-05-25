@@ -1,8 +1,11 @@
 <?php
 // Database connection code with absolute path
-require_once(dirname(__DIR__).'../../takahe.conn.php');
-// Make sure session variables exist
+require_once(dirname(__DIR__).'/../takahe.conn.php');
+require_once(dirname(__DIR__).'/api/account.php');
 if(session_status() == PHP_SESSION_NONE) session_start();
+if(!isset($_SESSION['account'])) $_SESSION['account'] = new account($conn);
+else $_SESSION['account']->conn = $conn;
+// Make sure session variables exist
 ?><!doctype html>
 <html class="no-js" lang="">
 
@@ -74,7 +77,7 @@ if(session_status() == PHP_SESSION_NONE) session_start();
 				}
 				?>
 				<a href="/dashboard/">Dashboard</a>
-				<a href="/account/"><?php echo (isset($_SESSION['access_token'])? $_SESSION['user']->username : 'Account'); ?></a>
+				<a href="/account/"><?php echo ($_SESSION['account']->logged_in? $_SESSION['account']->username : 'Account'); ?></a>
 			</nav>
 		</div>
 		<div class="content">

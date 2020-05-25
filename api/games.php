@@ -2,17 +2,16 @@
 require_once(dirname(__DIR__)."/api/error.php");
 
 class games {
-	function __construct($conn, $ctx=null)
+	function __construct($conn)
 	{
-		$this->ctx = $ctx;
 		$this->conn = $conn;
 	}
 	
-	function run()
+	function resolve($ctx)
 	{
-		switch($this->ctx->params[0]){
+		switch($ctx->params[0]){
 			case "games":
-				switch($this->ctx->method){
+				switch($ctx->method){
 					case 'GET':
 						return json_encode($this->get_games());
 					break;
@@ -21,17 +20,17 @@ class games {
 				}
 			break;
 			case "game":
-				switch($this->ctx->method){
+				switch($ctx->method){
 					case "GET":
-						if(count($this->ctx->params)==2)
-							return json_encode($this->get_game($this->ctx->params[1]));
-						elseif(count($this->ctx->params)==3){
-							switch($this->ctx->params[2]){
+						if(count($ctx->params)==2)
+							return json_encode($this->get_game($ctx->params[1]));
+						elseif(count($ctx->params)==3){
+							switch($ctx->params[2]){
 								case "gsmses":
-									return json_encode($this->get_game_gsmses($this->ctx->params[1]));
+									return json_encode($this->get_game_gsmses($ctx->params[1]));
 								break;
 								case "tiers":
-									return json_encode($this->get_game_tiers($this->ctx->prarms[1]));
+									return json_encode($this->get_game_tiers($ctx->prarms[1]));
 								break;
 								default:
 									return generic_error(UNKNOWN_REQUEST);

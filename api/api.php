@@ -2,6 +2,12 @@
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *"); // This is for debug, on release this should be *.yiays.com
 
+require_once("games.php");
+require_once("gsmses.php");
+require_once("account.php");
+
+session_start();
+
 // API response framework
 require_once(dirname(__DIR__)."/api/error.php");
 require_once(dirname(__DIR__)."/../takahe.conn.php");
@@ -32,15 +38,21 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
             break;
             case "games":
             case "game":
-                require_once("games.php");
-                $games = new games($conn, $ctx);
-                print($games->run());
+                $games = new games($conn);
+                print($games->resolve($ctx));
             break;
             case "gsmses":
             case "gsms":
-                require_once("gsmses.php");
-                $gsmses = new gsmses($conn, $ctx);
-                print($gsmses->run());
+                $gsmses = new gsmses($conn);
+                print($gsmses->resolve($ctx));
+            break;
+            case "account":
+                if(!isset($_SESSION['account'])){
+                    $_SESSION['account'] = new account($conn);
+                }else{
+                    $_SESSION['account']->conn = $conn;
+                }
+                print($_SESSION['account']->resolve($ctx));
             break;
             default:
                 generic_error(UNKNOWN_REQUEST);

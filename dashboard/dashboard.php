@@ -13,7 +13,7 @@ $tags = "dashboard,control panel,settings,customize,customise,admin,operator,op,
 $compactheader = true;
 $headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=104">';
 require_once('../includes/header.php');
-if(!isset($_SESSION['access_token'])){
+if(!$_SESSION['account']->logged_in){
 ?>
 <div class="dashboard">
     <div class="guilds">
