@@ -150,7 +150,7 @@ require_once("../includes/header.php");
     ?>
   </div>
 </div>
-<div class="overlay flex flex-center<?php if(!($apiname&&$gsms)) echo ' hidden'; ?>">
+<div class="overlay flex flex-center<?php if(!($apiname&&$gsms&&$tier)) echo ' hidden'; ?>">
   <div class="card half light<?php if(!$remainingdeals) echo ' hidden'; ?>">
     <div class="background themegradient dark" style="padding: 2rem; height: auto;">
       <a href="<?php echo "/game/$apiname/$gsms/"; ?>" class="close">&times;</a>

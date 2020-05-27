@@ -70,32 +70,43 @@ $(document).ready(function(){
     
     // Guild drag and drop
     let draggedguild = null;
-    $('.guild').on('dragstart', function(e){
-        draggedguild = e.target;
-    });
-    function getGuildPos(my){
-        var max = 1;
-        var closest = 1000000;
-        $('.guild').each(function(i) {
-            var pos = my - $(this).position().top;
-            if(pos > 0 && pos < closest && $(this).css('order') > max){
-                max = $(this).css('order');
-            }
+    let startpos = null;
+    function moveGuild(guild, newpos, oldpos){
+        $('.guild').each(function(){
+           if(inrange($(this).css('order'), newpos, oldpos)){
+               if(newpos>oldpos) $(this).css('order', parseInt($(this).css('order'))-1);
+               else $(this).css('order', parseInt($(this).css('order'))+1);
+           }
         });
-        return max-1;
+        guild.css('order', newpos);
+        return guild;
     }
+    $('.guild').on('dragstart', function(e){
+        draggedguild = $(e.target);
+        startpos = draggedguild.css('order');
+        draggedguild.addClass('droppreview');
+    });
     $('.guilds').on('dragover', function(e){
         e.preventDefault();
-        var topPos = getGuildPos(e.pageY);
-        $('.droppreview').css({'order': topPos}).removeClass('hidden');
+    });
+    $('.guilds>.guild:not(.invalid):not(.hamburger)').on('dragenter', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var hoverpos = parseInt($(e.target).css('order'));
+        if(hoverpos!=startpos && hoverpos!=0){
+            moveGuild(draggedguild, hoverpos, startpos);
+            startpos = hoverpos;
+        }
     });
     $('.guilds').on('mouseleave', function(e){
-        $('.droppreview').addClass('hidden');
+        draggedguild.trigger('drop');
     });
     $('.guild').on('drop', function(e){
         e.preventDefault();
-        var topPos = getGuildPos(e.pageY);
-        $(draggedguild).css({'order': topPos});
-        $('.droppreview').addClass('hidden');
+        draggedguild.removeClass('droppreview');
     });
 });
+
+function inrange(x, a, b){
+    return ((x-a)*(x-b) <= 0);
+}

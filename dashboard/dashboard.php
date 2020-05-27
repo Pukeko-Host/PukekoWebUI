@@ -1,17 +1,13 @@
 <?php
 $params = explode('/', substr($_SERVER['REQUEST_URI'], 11));
-$GUILD = $params[0]? $params[0]: NULL;
-$GAMESERVER = $params[1]? $params[1]: NULL;
-
-$TIERCLASS = [
-    'Gold'=>'Golden'
-];
+$GUILD = count($params)>0? $params[0]: NULL;
+$GAMESERVER = count($params)>1? $params[1]: NULL;
 
 $title = "Dashboard";
 $description = "Manage Pukeko servers you share with your fellow discord users. Anyone on any discord server can create a game server to play with others on the spot.";
 $tags = "dashboard,control panel,settings,customize,customise,admin,operator,op,terminal,command line";
 $compactheader = true;
-$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=104">';
+$headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=106">';
 require_once('../includes/header.php');
 if(!$_SESSION['account']->logged_in){
 ?>
@@ -74,16 +70,15 @@ if(!$_SESSION['account']->logged_in){
                 <span></span>
             </div>
         </label>
-        <div class="droppreview hidden"></div>
     <?php
     $guilds = [];
     
-    foreach($_SESSION['guilds'] as $guild){
-        $result = $conn->query("SELECT * FROM userguild WHERE userId = ".$_SESSION['user']->id." AND guildId = ".$guild->id);
+    $defaultpos = 1;
+    foreach($_SESSION['account']->guilds as $guild){
+        $result = $conn->query("SELECT * FROM userguild WHERE userId = {$_SESSION['account']->discordId} AND guildId = $guild->id");
         if(!$result){
             echo '<div class="invalid guild" style="order: 102;"><span class="tooltip">Failed to load your guilds</span></div>';
         }else{
-            $defaultpos = 101;
             while($row = $result->fetch_assoc()){
                 $guilds[$guild->id]=array('id'=>$guild->id,'name'=>$guild->name,'icon'=>"https://cdn.discordapp.com/icons/".$guild->id."/".$guild->icon.".png",'gameservers'=>array('active'=>array(),'archived'=>array()));
                 echo '<a href="/dashboard/'.$guild->id.'/" class="guild" data-id="'.$guild->id.'" style="order:'.($row['Pos']? $row['Pos']: $defaultpos++).'" draggable="true">';
@@ -102,7 +97,7 @@ if(!$_SESSION['account']->logged_in){
                                 LEFT JOIN gametier ON game.Id = gametier.GameId AND gameserver.TierId = gametier.TierNumber)
                                 LEFT JOIN gsms ON gameserver.GMSId = gsms.Id)
                                 LEFT JOIN userguild ON gameserver.GuildId = userguild.GuildId
-                            WHERE userguild.userId = ".$_SESSION['user']->id."
+                            WHERE userguild.userId = {$_SESSION['account']->discordId}
                             GROUP BY gameserver.Id
                             ORDER BY gameserver.GuildId ASC, gameserver.Active DESC");
     if(!$result){
@@ -136,7 +131,7 @@ if(!$_SESSION['account']->logged_in){
                 }
                 if($i==0){
                     echo '<a class="gameserver invalid" href="/dashboard/'.$guild['id'].'/">';
-                    if($active=='active') echo '<i>Any server purchased by anyone on this discord server will appear here.<br>The server address is reserved for your game for up to a week of inactivity.</i>';
+                    if($active=='active') echo '<i>Any server purchased by anyone on this discord server will appear here.<br>The server address is reserved for your game for up to 2 weeks of inactivity.</i>';
                     else echo '<i>If a server is not used for 2 weeks, it will be archived here.<br>From here, you can ressurect the server, or download the save file.</i>';
                     echo '</a>';
                 }
@@ -163,7 +158,7 @@ if(!$_SESSION['account']->logged_in){
                     echo '  <div class="jumbotron dark">';
                     echo '      <div class="content">';
                     echo '          <h2>'.$gameserver['name'].'</h2>';
-                    echo '          <p>'.(isset($TIERCLASS[$gameserver['tiername']])?$TIERCLASS[$gameserver['tiername']]:$gameserver['tiername']).' <i>'.$gameserver['gamename'].'</i> Hosting Plan</p>';
+                    echo '          <p>'.$gameserver['tiername'].' Tier <i>'.$gameserver['gamename'].'</i> Hosting Plan</p>';
                     echo '      </div>';
                     echo '      <div class="footer">';
                     echo '          <a class="btn">Stop Server</a>';
@@ -190,6 +185,6 @@ if(!$_SESSION['account']->logged_in){
 </div>
 <?php
 }
-$footerextra = '<script src="/js/dashboard.js?v=29"></script>';
+$footerextra = '<script src="/js/dashboard.js?v=43"></script>';
 require_once('../includes/footer.php');
 ?>

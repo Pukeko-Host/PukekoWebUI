@@ -66,7 +66,11 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
             'GET /game/{id}/tiers',
             'GET /game/{apiname}/',
             'GET /gsmses/',
-            'GET /gsms/{id}/'
+            'GET /gsms/{id}/',
+            'GET /account/',
+            'GET /account/login/',
+            'GET /account/logout/',
+            'GET /account/guilds/'
         ]]));
     }
     $conn->close();
