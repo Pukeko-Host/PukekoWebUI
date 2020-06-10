@@ -46,12 +46,18 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
                 $gsmses = new gsmses($conn);
                 print($gsmses->resolve($ctx));
             break;
+            case "gameservers":
+            case "gameserver":
+                $gameservers = new gameservers($conn);
+                print($gsmses->resolve($ctx));
+            break;
             case "account":
                 if(!isset($_SESSION['account'])){
                     $_SESSION['account'] = new account($conn);
                 }else{
                     $_SESSION['account']->conn = $conn;
                 }
+                $_SESSION['account']->guilds->conn = $conn;
                 print($_SESSION['account']->resolve($ctx));
             break;
             default:
@@ -62,15 +68,19 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
         'queries'=>[
             'GET /games/',
             'GET /game/{id}/',
-            'GET /game/{id}/gsmses',
-            'GET /game/{id}/tiers',
+            'GET /game/{id}/gsmses/',
+            'GET /game/{id}/tiers/',
             'GET /game/{apiname}/',
             'GET /gsmses/',
             'GET /gsms/{id}/',
+            'GET /gsms/{id}/gameservers/',
             'GET /account/',
             'GET /account/login/',
             'GET /account/logout/',
-            'GET /account/guilds/'
+            'GET /account/guilds/',
+            'GET /account/guild/{id}/',
+            'GET /account/guild/{id}/gameservers/active/',
+            'GET /account/guild/{id}/gameservers/archived/',
         ]]));
     }
     $conn->close();

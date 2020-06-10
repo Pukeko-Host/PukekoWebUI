@@ -1,12 +1,13 @@
 <?php
 require_once(dirname(__DIR__)."/api/error.php");
+require_once(dirname(__DIR__)."/api/guilds.php");
 // Authorize with discord (define('OAUTH2_CLIENT_ID') and define('OAUTH2_CLIENT_SECRET'))
 require_once(__DIR__."/../../takahe.discord.php");
 
 ini_set('max_execution_time', 300);
 
 define("CALLBACK_URL", "https://pukeko.yiays.com/api/account/callback/");
-define("API_URL", "https://discordapp.com/api");
+define("API_URL", "https://discord.com/api");
 
 class account {
 	function __construct($conn)
@@ -47,16 +48,17 @@ class account {
 			]);
 		}
 		switch($ctx->params[1]){
-			case "guilds":
-				return json_encode($this->guilds);
+			case 'guild':
+			case 'guilds':
+				return $this->guilds->resolve($ctx);
 			break;
-			case "login":
+			case 'login':
 				return json_encode($this->login());
 			break;
-			case "logout":
+			case 'logout':
 				return json_encode($this->logout());
 			break;
-			case "callback":
+			case 'callback':
 				$result = $this->login_callback(get('code'));
 				if(isset($result['redirect'])){
 					header("Location: $result[redirect]");
@@ -136,21 +138,19 @@ class account {
 		$this->locale = $response->locale;
 		
 		// Sync results with database
-		$result = $this->conn->query("CALL AddUser($this->discordId, \"".$this->conn->escape_string($this->username)."\", $this->discriminator, \"".$this->conn->escape_string($this->email)."\", @UserId)");
+		$result = $this->conn->query("CALL AddUser($this->discordId, \"".$this->conn->escape_string($this->username)."\", $this->discriminator, \"".$this->conn->escape_string($this->email)."\")");
 		if(!$result){
 			$this->logout();
 			specific_error(SERVER_ERROR, "Failed to record your login in the database, please try again later.");
 		}
-		$result = $this->conn->query("SELECT @UserId");
+		$result = $this->conn->query("SELECT Id FROM user WHERE DiscordId = $this->discordId");
 		$this->id = $result->fetch_array()[0][0];
 	}
 	
 	function get_discord_guilds(){
+		$this->guilds = new guilds($this->conn);
 		$response = $this->apiRequest(API_URL."/users/@me/guilds"); //TODO: Error handling
-		$this->guilds = $response;
-		foreach($response as &$guild){
-			$this->conn->query("CALL AddGuild($guild->id, $this->discordId)");
-		}
+		$this->guilds->get_userguilds($this->discordId, $response);
 	}
 	
 	function apiRequest($url, $post=FALSE, $headers=array()) {

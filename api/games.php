@@ -103,6 +103,26 @@ class games {
 		}
 		return $resultobject;
 	}
+	
+	function get_game_gsms($id, $gsmsid){
+		$id = intval($id);
+		$result = $this->conn->query("SELECT gsms.* FROM gamesupport LEFT JOIN gsms ON gamesupport.ServerId = gsms.Id  WHERE gamesupport.GameId = $id AND gsms.Id = $gsmsid");
+		
+		if(!$result){
+			specific_error(SERVER_ERROR, $result->error);
+		}
+		return $result->fetch_assoc();
+	}
+	
+	function get_game_tier($id, $tiernum){
+		$id = intval($id);
+		$result = $this->conn->query("SELECT gametier.* FROM gametier WHERE GameId = $id AND TierNumber = $tiernum");
+		
+		if(!$result){
+			specific_error(SERVER_ERROR, $result->error);
+		}
+		return $result->fetch_assoc();
+	}
 }
 
 ?>

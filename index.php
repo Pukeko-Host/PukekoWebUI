@@ -5,7 +5,7 @@ require_once("includes/header.php");
   <div class="wrapper main">
     <h2>What is PukekoHost?</h2>
     <p>
-      PukekoHost is a game hosting service that makes it as easy to start servers for your favourite games quickly, share them with your Discord server, and <em>allow anyone to pay for uptime when they want to play</em>.
+      PukekoHost is a game hosting service that makes it easy to start servers for your favourite games quickly, share them with your Discord server, and <em>allow anyone to pay for uptime when they want to play</em>.
       We also charge by the hour, instead of by the month, which makes it much easier to divide up payments between multiple people.
     </p>
     <p>

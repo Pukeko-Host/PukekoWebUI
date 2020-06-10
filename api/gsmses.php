@@ -22,8 +22,20 @@ class gsmses {
 			case "gsms":
 				switch($ctx->method){
 					case "GET":
-						if(count($ctx->params)>1)
-							return json_encode($this->get_gsms($ctx->params[1]));
+						if(count($ctx->params)>1){
+							if(count($ctx->params)>2){
+								switch($ctx->params[2]){
+									case 'gameservers':
+										return json_encode($this->gsms_get_gameservers($ctx->params[1]));
+									break;
+									default:
+										return generic_error(VALIDATION_ERROR);
+									break;
+								}
+							}else{
+								return json_encode($this->get_gsms($ctx->params[1]));
+							}
+						}
 						else
 							return generic_error(VALIDATION_ERROR);
 					break;
@@ -56,6 +68,20 @@ class gsmses {
 			specific_error(SERVER_ERROR, $result->error);
 		}
 		return $result->fetch_assoc();
+	}
+	
+	function gsms_get_gameservers($id){
+		$id = intval($id);
+		$result = $this->conn->query("SELECT * FROM gameserver WHERE GMSId = $id");
+		
+		if(!$result){
+			specific_error(SERVER_ERROR, $result->error);
+		}
+		$resultobject = array();
+		while($row = $result->fetch_assoc()){
+			$resultobject[]=$row;
+		}
+		return $resultobject;
 	}
 }
 
