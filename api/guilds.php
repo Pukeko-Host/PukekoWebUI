@@ -1,8 +1,9 @@
 <?php
+require_once(dirname(__DIR__)."/api/api.php");
 require_once(dirname(__DIR__)."/api/error.php");
 require_once(dirname(__DIR__)."/api/gameservers.php");
 
-class guilds {
+class guilds extends Handler {
 	function __construct($conn)
 	{
 		$this->conn = $conn;
@@ -12,12 +13,12 @@ class guilds {
 	function resolve($ctx){
 		switch($ctx->params[1]){
 			case "guilds":
-				return json_encode($this->show_guilds());
+				return json_encode($this->show_guilds(), JSON_PRETTY_PRINT);
 			break;
 			case "guild":
 				switch(count($ctx->params)){
 					case 3:
-						return json_encode($this->show_guild($ctx->params[2]));
+						return json_encode($this->show_guild($ctx->params[2]), JSON_PRETTY_PRINT);
 					break;
 					case 5:
 						switch($ctx->params[3]){
@@ -26,7 +27,7 @@ class guilds {
 									$target = $this->list[$ctx->params[2]];
 									$target->gameservers->conn = $this->conn;
 									$target->gameservers->get_gameservers($target->id);
-									return json_encode($target->gameservers->show_gameservers($ctx->params[4]));
+									return json_encode($target->gameservers->show_gameservers($ctx->params[4]), JSON_PRETTY_PRINT);
 								}
 								else return generic_error(UNKNOWN_REQUEST);
 							break;
@@ -63,7 +64,7 @@ class guilds {
 	function get_userguilds($userid, $apiguilds){
 		$defaultpos = 1;
 		foreach($apiguilds as &$guild){
-			$this->conn->query("CALL AddGuild($guild->id, $this->discordId)");
+			$this->conn->query("CALL AddGuild($guild->id, $userid)");
 			$this->list[$guild->id] = new guild($this->conn, $guild->name, $guild->id, $guild->icon, $defaultpos);
 			$defaultpos += 1;
 		}

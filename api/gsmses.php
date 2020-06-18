@@ -1,7 +1,8 @@
 <?php
+require_once(dirname(__DIR__)."/api/api.php");
 require_once(dirname(__DIR__)."/api/error.php");
 
-class gsmses {
+class gsmses extends Handler {
 	function __construct($conn)
 	{
 		$this->conn = $conn;
@@ -13,7 +14,7 @@ class gsmses {
 			case "gsmses":
 				switch($ctx->method){
 					case 'GET':
-						return json_encode($this->get_gsmses());
+						return json_encode($this->get_gsmses(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 					break;
 					default:
 						return generic_error(UNKNOWN_REQUEST);
@@ -26,14 +27,14 @@ class gsmses {
 							if(count($ctx->params)>2){
 								switch($ctx->params[2]){
 									case 'gameservers':
-										return json_encode($this->gsms_get_gameservers($ctx->params[1]));
+										return json_encode($this->gsms_get_gameservers($ctx->params[1]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 									break;
 									default:
 										return generic_error(VALIDATION_ERROR);
 									break;
 								}
 							}else{
-								return json_encode($this->get_gsms($ctx->params[1]));
+								return json_encode($this->get_gsms($ctx->params[1]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 							}
 						}
 						else

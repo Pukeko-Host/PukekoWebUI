@@ -1,16 +1,17 @@
 <?php
-header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *"); // This is for debug, on release this should be *.yiays.com
-
-require_once("games.php");
-require_once("gsmses.php");
-require_once("account.php");
-
-session_start();
+require_once(dirname(__DIR__)."/api/games.php");
+require_once(dirname(__DIR__)."/api/gsmses.php");
+require_once(dirname(__DIR__)."/api/account.php");
 
 // API response framework
 require_once(dirname(__DIR__)."/api/error.php");
 require_once(dirname(__DIR__)."/../takahe.conn.php");
+
+session_start();
+
+if(!isset($_SESSION['account'])) $_SESSION['account'] = serialize(new account($conn));
+$account = unserialize($_SESSION['account']);
+$account->conn = $conn;
 
 class Request {
     function __construct($url, $method)
@@ -27,14 +28,44 @@ class Request {
     }
 }
 
+abstract class Handler {
+    function __construct(mysqli $conn){
+        $this->conn = $conn;
+    }
+
+    function resolve(Request $ctx){
+        return generic_error(UNKNOWN_REQUEST);
+    }
+	
+	function apiRequest($url, $post=FALSE, $headers=array()) {
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		if($post){
+			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+		}
+		$headers[] = 'Accept: application/json';
+		if(isset($this->token))
+			$headers[] = "Authorization: Bearer $this->token";
+		array_push($headers,"Content-Type: application/x-www-form-urlencoded");
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		$response = curl_exec($ch);
+		return json_decode($response);
+	}
+}
+
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
+    header("Content-Type: application/json");
+    header("Access-Control-Allow-Origin: *"); // This is for debug, on release this should be *.yiays.com
+    
     $ctx = new Request($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 
     if(count($ctx->params)>0){
         switch($ctx->params[0]){
             case "test":
                 http_response_code(VALID_RESPONSE);
-                print(json_encode(['desc' => $ctx->method]));
+                print(json_encode(['desc' => $ctx->method], JSON_PRETTY_PRINT));
             break;
             case "games":
             case "game":
@@ -49,16 +80,11 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
             case "gameservers":
             case "gameserver":
                 $gameservers = new gameservers($conn);
-                print($gsmses->resolve($ctx));
+                print($gameservers->resolve($ctx));
             break;
             case "account":
-                if(!isset($_SESSION['account'])){
-                    $_SESSION['account'] = new account($conn);
-                }else{
-                    $_SESSION['account']->conn = $conn;
-                }
-                $_SESSION['account']->guilds->conn = $conn;
-                print($_SESSION['account']->resolve($ctx));
+                print($account->resolve($ctx));
+                $_SESSION['account'] = serialize($account);
             break;
             default:
                 generic_error(UNKNOWN_REQUEST);
@@ -81,7 +107,7 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
             'GET /account/guild/{id}/',
             'GET /account/guild/{id}/gameservers/active/',
             'GET /account/guild/{id}/gameservers/archived/',
-        ]]));
+        ]], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
     $conn->close();
 }

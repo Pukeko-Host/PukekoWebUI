@@ -16,10 +16,10 @@ $CODE_DESC = [
 function generic_error($error){
     global $CODE_DESC;
     http_response_code($error);
-    die(json_encode(['desc' => $CODE_DESC[$error]]));
+    die(json_encode(['desc' => $CODE_DESC[$error]], JSON_PRETTY_PRINT));
 }
 function specific_error($error, $desc){
     http_response_code($error);
-    die(json_encode(['desc' => $desc]));
+    die(json_encode(['desc' => $desc], JSON_PRETTY_PRINT));
 }
 ?>

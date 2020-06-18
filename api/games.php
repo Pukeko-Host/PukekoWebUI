@@ -1,7 +1,8 @@
 <?php
+require_once(dirname(__DIR__)."/api/api.php");
 require_once(dirname(__DIR__)."/api/error.php");
 
-class games {
+class games extends Handler {
 	function __construct($conn)
 	{
 		$this->conn = $conn;
@@ -13,7 +14,7 @@ class games {
 			case "games":
 				switch($ctx->method){
 					case 'GET':
-						return json_encode($this->get_games());
+						return json_encode($this->get_games(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 					break;
 					default:
 						return generic_error(UNKNOWN_REQUEST);
@@ -23,14 +24,19 @@ class games {
 				switch($ctx->method){
 					case "GET":
 						if(count($ctx->params)==2)
-							return json_encode($this->get_game($ctx->params[1]));
+							if(ctype_digit($ctx->params[1])){
+								return json_encode($this->get_game($ctx->params[1]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+							}
+							else{
+								return json_encode($this->get_game(NULL, $ctx->params[1]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+							}
 						elseif(count($ctx->params)==3){
 							switch($ctx->params[2]){
 								case "gsmses":
-									return json_encode($this->get_game_gsmses($ctx->params[1]));
+									return json_encode($this->get_game_gsmses($ctx->params[1]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 								break;
 								case "tiers":
-									return json_encode($this->get_game_tiers($ctx->prarms[1]));
+									return json_encode($this->get_game_tiers($ctx->params[1]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 								break;
 								default:
 									return generic_error(UNKNOWN_REQUEST);

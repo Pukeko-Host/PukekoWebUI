@@ -1,44 +1,46 @@
 <?php
-require_once('../../takahe.conn.php');
-require_once('../api/account.php');
-session_start();
-if(!session('account')) $_SESSION['account'] = new account($conn);
-else session('account')->conn = $conn;
+require('../../takahe.conn.php');
+require('../api/account.php');
+if(!isset($_SESSION['account'])) $_SESSION['account'] = serialize(new account($conn));
+$account = unserialize($_SESSION['account']);
+$account->conn = $conn;
 
-if(get('rememberme')){
+if(isset($_GET['rememberme'])){
 	$params = session_get_cookie_params();
 	setcookie(session_name(), $_COOKIE[session_name()], time() + 60*60*24*30, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
 	die('1');
 }
-if(get('login')){
-	if(!session('account')->logged_in){
-		$result = session('account')->login(get('return')?urldecode(get('return')):'/account/');
+if(isset($_GET['login'])){
+	if(!$account->logged_in){
+		$result = $account->login(isset($_GET['return'])?urldecode($_GET['return']):'/account/');
+		$_SESSION['account'] = serialize($account);
 		header("Location: $result[redirect]");
 		die();
 	}
 }
-if(get('logout')){
-	if(session('account')->logged_in){
-		session('account')->logout();
+if(isset($_GET['logout'])){
+	if($account->logged_in){
+		$account->logout();
+		$_SESSION['account'] = serialize($account);
 	}
 }
 
-if(session('account')->logged_in) {
-	$title = session('account')->username." | Account";
+if($account->logged_in) {
+	$title = $account->username." | Account";
 	$subtitle = "Account Settings";
 	require_once('../includes/header.php');
 	?>
 	<div class="jumbotron dark">
 		<div class="content">
 			<h2>Logged In</h2>
-			<p>Welcome, <?php echo session('account')->username;?></p>
+			<p>Welcome, <?php echo $account->username;?></p>
 		</div>
 		<div class="footer">
 			<a href="?logout" class="btn">Logout</a>
 		</div>
 		<div class="background" style="background:black;">
-			<img class="float-right" id="userphppfp" alt="<?php echo session('account')->username;?>'s profile picture" src="<?php echo session('account')->avatar;?>">
-			<img class="stretch-fill blur dim" alt="<?php echo session('account')->username;?>'s profile picture, but big and blury" src="<?php echo session('account')->avatar;?>">
+			<img class="float-right" id="userphppfp" alt="<?php echo $account->username;?>'s profile picture" src="<?php echo $account->avatar;?>">
+			<img class="stretch-fill blur dim" alt="<?php echo $account->username;?>'s profile picture, but big and blury" src="<?php echo $account->avatar;?>">
 		</div>
 	</div>
 <?php
@@ -70,10 +72,4 @@ if(session('account')->logged_in) {
 </div>
 <?php
 require_once('../includes/footer.php');
-
-// some handy functions
-
-function session($key, $default=NULL) {
-	return array_key_exists($key, $_SESSION) ? $_SESSION[$key] : $default;
-}
 ?>

@@ -9,10 +9,11 @@ $tags = "dashboard,control panel,settings,customize,customise,admin,operator,op,
 $compactheader = true;
 $headerextra = '<link rel="stylesheet" href="/css/dashboard.css?v=106">';
 require_once('../includes/header.php');
-if(!$_SESSION['account']->logged_in){
+$account = unserialize($_SESSION['account']);
+if(!$account->logged_in){
     // Refresh conn so more queries can be made.
-    $_SESSION['account']->conn = $conn;
-    $_SESSION['account']->guilds->conn = $conn;
+    $account->conn = $conn;
+    $account->guilds->conn = $conn;
 ?>
 <div class="dashboard">
     <div class="guilds">
@@ -73,7 +74,7 @@ if(!$_SESSION['account']->logged_in){
             </div>
         </label>
     <?php
-    foreach($_SESSION['account']->guilds->list as $guild){
+    foreach($account->guilds->list as $guild){
         echo "<a href=\"/dashboard/$guild->id/\" class=\"guild".($guild->valid?'':' invalid').($guild->id==GUILD?' active':'')."\" data-id=\"$guild->id\" style=\"order:$guild->pos;\" draggable=\"true\">";
         echo "  <img src=\"$guild->icon?size=64\" alt=\"Discord server icon\" draggable=\"false\"><span class=\"tooltip\">$guild->name</span>";
         echo "</a>";
@@ -83,13 +84,13 @@ if(!$_SESSION['account']->logged_in){
     echo '<input type="checkbox" id="showgameservers" checked style="display:none;">';
     echo '<div class="gameserverscontainer">';
         ?>
-        <div class="default gameservers<?php if(!is_null(GUILD) && array_filter($_SESSION['account']->guilds->list, function($g){return $g->id==GUILD;})) echo " hidden"; ?>">
+        <div class="default gameservers<?php if(!is_null(GUILD) && array_filter($account->guilds->list, function($g){return $g->id==GUILD;})) echo " hidden"; ?>">
             <div class="dashed-outline text-center rounded">
                 Select a discord server from the left!
             </div>
         </div>
         <?php
-        foreach($_SESSION['account']->guilds->list as $guild){
+        foreach($account->guilds->list as $guild){
             $guild->conn = $conn;
             $guild->gameservers->conn = $conn;
             $guild->gameservers->get_gameservers($guild->id);
@@ -119,7 +120,7 @@ if(!$_SESSION['account']->logged_in){
         echo "</div>";
     ?>
     <div class="statuses">
-        <div class="default status<?php if(!is_null(GAMESERVER) && array_filter(array_values($_SESSION['account']->guilds->gameservers->list), function($g){return $g->id==GUILD;})) echo " hidden";?>">
+        <div class="default status<?php if(!is_null(GAMESERVER) && array_filter(array_values($account->guilds->gameservers->list), function($g){return $g->id==GUILD;})) echo " hidden";?>">
         <div class="jumbotron dark">
             <div class="content">
                 <h2>View the status of a game server here</h2>
@@ -129,7 +130,7 @@ if(!$_SESSION['account']->logged_in){
         </div>
         </div>
         <?php
-        foreach($_SESSION['account']->guilds->list as $guild){
+        foreach($account->guilds->list as $guild){
             foreach(['active','archived'] as $active){
                 foreach($guild->gameservers->list[$active] as $gameserver){
                     echo "<div class=\"status".(GAMESERVER == $gameserver->id?"":" hidden")."\" data-id=\"$gameserver->id\">";

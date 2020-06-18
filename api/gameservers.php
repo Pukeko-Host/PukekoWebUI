@@ -1,15 +1,12 @@
 <?php
+require_once(dirname(__DIR__)."/api/api.php");
 require_once(dirname(__DIR__)."/api/error.php");
 require_once(dirname(__DIR__)."/api/games.php");
 
-class gameservers {
+class gameservers extends Handler {
   function __construct($conn){
     $this->conn = $conn;
     $this->list = ['active'=>[], 'archived'=>[]];
-  }
-
-  function resolve($ctx){
-    return generic_error(UNKNOWN_REQUEST);
   }
   
   function show_gameservers($active){

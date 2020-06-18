@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__DIR__)."/api/api.php");
 require_once(dirname(__DIR__)."/api/error.php");
 require_once(dirname(__DIR__)."/api/guilds.php");
 // Authorize with discord (define('OAUTH2_CLIENT_ID') and define('OAUTH2_CLIENT_SECRET'))
@@ -9,7 +10,7 @@ ini_set('max_execution_time', 300);
 define("CALLBACK_URL", "https://pukeko.yiays.com/api/account/callback/");
 define("API_URL", "https://discord.com/api");
 
-class account {
+class account extends Handler {
 	function __construct($conn)
 	{
 		$this->conn = $conn;
@@ -27,7 +28,7 @@ class account {
 		$this->verified = false;
 		$this->mfa = false;
 		$this->locale = "en-US";
-		$this->guilds = [];
+		$this->guilds = new guilds($conn);
 		$this->balance = 0.00;
 	}
 	
@@ -45,7 +46,7 @@ class account {
 				'mfa'=>$this->mfa,
 				'locale'=>$this->locale,
 				'balance'=>$this->balance
-			]);
+			], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 		}
 		switch($ctx->params[1]){
 			case 'guild':
@@ -53,17 +54,17 @@ class account {
 				return $this->guilds->resolve($ctx);
 			break;
 			case 'login':
-				return json_encode($this->login());
+				return json_encode($this->login(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 			break;
 			case 'logout':
-				return json_encode($this->logout());
+				return json_encode($this->logout(), JSON_PRETTY_PRINT);
 			break;
 			case 'callback':
 				$result = $this->login_callback(get('code'));
 				if(isset($result['redirect'])){
 					header("Location: $result[redirect]");
 				}else{
-					print(json_encode($result));
+					print(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 				}
 			break;
 			default:
@@ -111,8 +112,7 @@ class account {
 			
 			return ['redirect'=>$this->return];
 		}else{
-			return $response;
-			//specific_error(VALIDATION_ERROR, "This login has expired.");
+			specific_error(VALIDATION_ERROR, (array)$response);
 		}
 	}
 	
@@ -148,26 +148,9 @@ class account {
 	}
 	
 	function get_discord_guilds(){
-		$this->guilds = new guilds($this->conn);
 		$response = $this->apiRequest(API_URL."/users/@me/guilds"); //TODO: Error handling
+		$this->guilds->conn = $this->conn;
 		$this->guilds->get_userguilds($this->discordId, $response);
-	}
-	
-	function apiRequest($url, $post=FALSE, $headers=array()) {
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		if($post){
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
-		}
-		$headers[] = 'Accept: application/json';
-		if(isset($this->token))
-			$headers[] = "Authorization: Bearer $this->token";
-		array_push($headers,"Content-Type: application/x-www-form-urlencoded");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		$response = curl_exec($ch);
-		return json_decode($response);
 	}
 }
 
