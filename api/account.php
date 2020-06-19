@@ -19,39 +19,34 @@ class account extends Handler {
 		$this->token = null;
 		$this->return = null;
 		
-		$this->id = 0;
-		$this->discordId = 0;
-		$this->username = "Not logged in";
-		$this->discriminator = "";
-		$this->email = "";
-		$this->avatar = "";
-		$this->verified = false;
-		$this->mfa = false;
-		$this->locale = "en-US";
-		$this->guilds = new guilds($conn);
-		$this->balance = 0.00;
+		$this->Id = 0;
+		$this->DiscordId = 0;
+		$this->Username = "Not logged in";
+		$this->Discriminator = "";
+		$this->Email = "";
+		$this->Avatar = "";
+		$this->Verified = false;
+		$this->MFA = false;
+		$this->Locale = "en-US";
+		$this->Guilds = new guilds($conn);
+		$this->Balance = 0.00;
 	}
 	
 	function resolve($ctx)
 	{
 		if(count($ctx->params)==1){
-			return json_encode([
-				'id'=>$this->id,
-				'discordId'=>$this->discordId,
-				'username'=>$this->username,
-				'discriminator'=>$this->discriminator,
-				'email'=>$this->email,
-				'avatar'=>$this->avatar,
-				'verified'=>$this->verified,
-				'mfa'=>$this->mfa,
-				'locale'=>$this->locale,
-				'balance'=>$this->balance
-			], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+			$result = (array)$this;
+			unset($result['conn']);
+			unset($result['token']);
+			unset($result['return']);
+			unset($result['Guilds']);
+			return json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 		}
 		switch($ctx->params[1]){
 			case 'guild':
 			case 'guilds':
-				return $this->guilds->resolve($ctx);
+				$this->Guilds->conn = $this->conn;
+				return $this->Guilds->resolve($ctx);
 			break;
 			case 'login':
 				return json_encode($this->login(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
@@ -128,29 +123,29 @@ class account extends Handler {
 	
 	function get_discord_user(){
 		$response = $this->apiRequest(API_URL."/users/@me");
-		$this->discordId = $response->id;
-		$this->username = $response->username;
-		$this->discriminator = $response->discriminator;
-		$this->email = $response->email;
-		$this->avatar = "https://cdn.discordapp.com/avatars/$this->discordId/$response->avatar.jpg?size=256";
-		$this->verified = $response->verified;
-		$this->mfa = $response->mfa_enabled;
-		$this->locale = $response->locale;
+		$this->DiscordId = $response->id;
+		$this->Username = $response->username;
+		$this->Discriminator = $response->discriminator;
+		$this->Email = $response->email;
+		$this->Avatar = "https://cdn.discordapp.com/avatars/$this->DiscordId/$response->avatar.jpg?size=256";
+		$this->Verified = $response->verified;
+		$this->MFA = $response->mfa_enabled;
+		$this->Locale = $response->locale;
 		
 		// Sync results with database
-		$result = $this->conn->query("CALL AddUser($this->discordId, \"".$this->conn->escape_string($this->username)."\", $this->discriminator, \"".$this->conn->escape_string($this->email)."\")");
+		$result = $this->conn->query("CALL AddUser($this->DiscordId, \"".$this->conn->escape_string($this->Username)."\", $this->Discriminator, \"".$this->conn->escape_string($this->Email)."\")");
 		if(!$result){
 			$this->logout();
 			specific_error(SERVER_ERROR, "Failed to record your login in the database, please try again later.");
 		}
-		$result = $this->conn->query("SELECT Id FROM user WHERE DiscordId = $this->discordId");
-		$this->id = $result->fetch_array()[0][0];
+		$result = $this->conn->query("SELECT Id FROM user WHERE DiscordId = $this->DiscordId");
+		$this->Id = $result->fetch_array()[0][0];
 	}
 	
 	function get_discord_guilds(){
 		$response = $this->apiRequest(API_URL."/users/@me/guilds"); //TODO: Error handling
-		$this->guilds->conn = $this->conn;
-		$this->guilds->get_userguilds($this->discordId, $response);
+		$this->Guilds->conn = $this->conn;
+		$this->Guilds->get_userguilds($this->DiscordId, $response);
 	}
 }
 

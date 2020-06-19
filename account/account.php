@@ -26,21 +26,21 @@ if(isset($_GET['logout'])){
 }
 
 if($account->logged_in) {
-	$title = $account->username." | Account";
+	$title = $account->Username." | Account";
 	$subtitle = "Account Settings";
 	require_once('../includes/header.php');
 	?>
 	<div class="jumbotron dark">
 		<div class="content">
 			<h2>Logged In</h2>
-			<p>Welcome, <?php echo $account->username;?></p>
+			<p>Welcome, <?php echo $account->Username;?></p>
 		</div>
 		<div class="footer">
 			<a href="?logout" class="btn">Logout</a>
 		</div>
 		<div class="background" style="background:black;">
-			<img class="float-right" id="userphppfp" alt="<?php echo $account->username;?>'s profile picture" src="<?php echo $account->avatar;?>">
-			<img class="stretch-fill blur dim" alt="<?php echo $account->username;?>'s profile picture, but big and blury" src="<?php echo $account->avatar;?>">
+			<img class="float-right" id="userphppfp" alt="<?php echo $account->Username;?>'s profile picture" src="<?php echo $account->Avatar;?>">
+			<img class="stretch-fill blur dim" alt="<?php echo $account->Username;?>'s profile picture, but big and blury" src="<?php echo $account->Avatar;?>">
 		</div>
 	</div>
 <?php

@@ -78,7 +78,7 @@ $account->conn = $conn;
 				}
 				?>
 				<a href="/dashboard/">Dashboard</a>
-				<a href="/account/"><?php echo ($account->logged_in? $account->username : 'Account'); ?></a>
+				<a href="/account/"><?php echo ($account->logged_in? $account->Username : 'Account'); ?></a>
 			</nav>
 		</div>
 		<div class="content">

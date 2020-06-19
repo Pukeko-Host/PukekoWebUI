@@ -26,7 +26,7 @@ class gameservers extends Handler {
                                   ORDER BY GuildId ASC, Active DESC");
     
     if(!$result){
-      specific_error(SERVER_ERROR, "Failed to get gameservers; ".$this->conn->error);
+      specific_error(SERVER_ERROR, "Failed to get gameservers; ".$guildid);//$this->conn->error);
     }
     $this->list = ['active'=>[], 'archived'=>[]];
     while($row = $result->fetch_assoc()){
@@ -38,15 +38,15 @@ class gameservers extends Handler {
 class gameserver {
   function __construct($conn, $id, $name, $active, $running, $minutes, $gameid, $tierid, $gsmsid){
     $this->conn = $conn;
-    $this->id = $id;
-    $this->name = $name;
-    $this->state = ($active?'active':($running?'running':'archived'));
-    $this->minutes = $minutes;
+    $this->Id = $id;
+    $this->Name = $name;
+    $this->State = ($running?'running':($active?'active':'archived'));
+    $this->Minutes = $minutes;
     
     $games = new games($conn);
-    $this->game = $games->get_game($gameid);
-    $this->tier = $games->get_game_tier($gameid, $tierid);
-    $this->gsms = $games->get_game_gsms($gameid, $gsmsid);
+    $this->Game = $games->get_game($gameid);
+    $this->Tier = $games->get_game_tier($gameid, $tierid);
+    $this->GSMS = $games->get_game_gsms($gameid, $gsmsid);
   }
 }
 ?>
