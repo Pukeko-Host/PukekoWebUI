@@ -13,6 +13,7 @@ if(!isset($_SESSION['account'])) $_SESSION['account'] = serialize(new account($c
 $account = unserialize($_SESSION['account']);
 $account->conn = $conn;
 
+// Requests provide context to Handlers
 class Request {
     function __construct($url, $method)
     {
@@ -28,6 +29,7 @@ class Request {
     }
 }
 
+// Handlers are extended by modules in files in this directory
 abstract class Handler {
     function __construct(mysqli $conn){
         $this->conn = $conn;
@@ -55,7 +57,10 @@ abstract class Handler {
 	}
 }
 
+// All api requests are sent here (thanks to .htaccess)
+// Only send a response if this file is master (not included by another file)
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
+    // Universal headers for any API response
     header("Content-Type: application/json");
     header("Access-Control-Allow-Origin: *"); // This is for debug, on release this should be *.yiays.com
     
@@ -63,26 +68,26 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
 
     if(count($ctx->params)>0){
         switch($ctx->params[0]){
-            case "test":
+            case "test": //api/test/
                 http_response_code(VALID_RESPONSE);
                 print(json_encode(['desc' => $ctx->method], JSON_PRETTY_PRINT));
             break;
-            case "games":
-            case "game":
+            case "games": //api/games/
+            case "game": //api/game/{id}/
                 $games = new games($conn);
                 print($games->resolve($ctx));
             break;
-            case "gsmses":
-            case "gsms":
+            case "gsmses": //api/gsmses/
+            case "gsms": //api/gsms/{id}/
                 $gsmses = new gsmses($conn);
                 print($gsmses->resolve($ctx));
             break;
-            case "gameservers":
-            case "gameserver":
+            case "gameservers": //api/gameservers/
+            case "gameserver": //api/gameserver/{id}/
                 $gameservers = new gameservers($conn);
                 print($gameservers->resolve($ctx));
             break;
-            case "account":
+            case "account": //api/account/
                 print($account->resolve($ctx));
                 $_SESSION['account'] = serialize($account);
             break;

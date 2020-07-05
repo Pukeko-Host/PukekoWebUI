@@ -22,7 +22,7 @@ class account extends Handler {
 		$this->Id = 0;
 		$this->DiscordId = 0;
 		$this->Username = "Not logged in";
-		$this->Discriminator = "";
+		$this->Discriminator = null;
 		$this->Email = "";
 		$this->Avatar = "";
 		$this->Verified = false;
@@ -50,6 +50,11 @@ class account extends Handler {
 			break;
 			case 'login':
 				return json_encode($this->login(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+			break;
+			case 'app_login':
+				if($ctx->method!='POST') return generic_error(UNKNOWN_REQUEST);
+				if(!isset($_POST['access_token'])) return specific_error(VALIDATION_ERROR, http_build_query($_POST));
+				return json_encode($this->app_login($_POST['access_token']), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 			break;
 			case 'logout':
 				return json_encode($this->logout(), JSON_PRETTY_PRINT);
@@ -97,10 +102,9 @@ class account extends Handler {
 		
 		if(isset($response->access_token)){
 			$this->token = $response->access_token;
-		
-			$this->logged_in = true;
 			
 			if($this->token){
+				$this->logged_in = true;
 				$this->get_discord_user();
 				$this->get_discord_guilds();
 			}
@@ -109,6 +113,19 @@ class account extends Handler {
 		}else{
 			specific_error(VALIDATION_ERROR, (array)$response);
 		}
+	}
+	
+	function app_login($token){
+		//TODO: Check if token is valid before storing it
+		
+		$this->token = $token;
+		
+		$this->logged_in = true;
+		
+		$this->get_discord_user();
+		$this->get_discord_guilds();
+		
+		return ['desc'=>"Logged in!"];
 	}
 	
 	function logout(){
