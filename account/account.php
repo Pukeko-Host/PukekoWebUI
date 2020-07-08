@@ -1,7 +1,7 @@
 <?php
 require('../../takahe.conn.php');
-require('../api/account.php');
-if(!isset($_SESSION['account'])) $_SESSION['account'] = serialize(new account($conn));
+require('../api/api.php');
+//if(!isset($_SESSION['account'])) $_SESSION['account'] = serialize(new account($conn));
 $account = unserialize($_SESSION['account']);
 $account->conn = $conn;
 

@@ -99,7 +99,7 @@ $(document).ready(function(){
         }
     });
     $('.guilds').on('mouseleave', function(e){
-        draggedguild.trigger('drop');
+        if(draggedguild) draggedguild.trigger('drop');
     });
     $('.guild').on('drop', function(e){
         e.preventDefault();

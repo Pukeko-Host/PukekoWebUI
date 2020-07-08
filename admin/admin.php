@@ -1,9 +1,9 @@
 <?php
 // Database connection code with absolute path
 require_once(dirname(__DIR__).'/../takahe.conn.php');
-require_once(dirname(__DIR__).'/api/account.php');
+require_once(dirname(__DIR__).'/api/api.php');
 session_start();
-if(!isset($_SESSION['account'])) $_SESSION['account'] = serialize(new account($conn));
+//if(!isset($_SESSION['account'])) $_SESSION['account'] = serialize(new account($conn));
 $account = unserialize($_SESSION['account']);
 $account->conn = $conn;
 // Make sure session variables exist

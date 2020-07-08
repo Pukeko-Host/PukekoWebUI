@@ -164,6 +164,6 @@ if(!$account->logged_in){
 </div>
 <?php
 }
-$footerextra = '<script src="/js/dashboard.js?v=43"></script>';
+$footerextra = '<script src="/js/dashboard.js?v=44"></script>';
 require_once('../includes/footer.php');
 ?>
