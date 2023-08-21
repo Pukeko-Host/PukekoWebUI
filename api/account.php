@@ -150,7 +150,7 @@ class account extends Handler {
 		$this->Locale = $response->locale;
 		
 		// Sync results with database
-		$result = $this->conn->query("CALL AddUser($this->DiscordId, \"".$this->conn->escape_string($this->Username)."\", $this->Discriminator, \"".$this->conn->escape_string($this->Email)."\")");
+		$result = $this->conn->query("INSERT pukekohost.user(DiscordId, Username, Discriminator, Email) VALUES ($this->DiscordId, \"".$this->conn->escape_string($this->Username)."\", $this->Discriminator, \"".$this->conn->escape_string($this->Email)."\") ON DUPLICATE KEY UPDATE Username = VALUES(Username), Discriminator = VALUES(Discriminator), Email = VALUES(Email)");
 		if(!$result){
 			$this->logout();
 			specific_error(SERVER_ERROR, "Failed to record your login in the database, please try again later.");

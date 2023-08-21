@@ -67,7 +67,7 @@ class guilds extends Handler {
 	function get_userguilds($userid, $apiguilds){
 		$defaultpos = 1;
 		foreach($apiguilds as &$apiguild){
-			$this->conn->query("CALL AddGuild($apiguild->id, $userid)");
+			$this->conn->query("INSERT INTO pukekohost.userguild(UserId, GuildId) VALUES ($userid, $apiguild->id) ON DUPLICATE KEY UPDATE UserId = UserId");
 			$this->list[$apiguild->id] = new guild($this->conn, $apiguild->name, $apiguild->id, $apiguild->icon, $defaultpos);
 			$defaultpos += 1;
 		}
